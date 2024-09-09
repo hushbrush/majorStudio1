@@ -43,7 +43,7 @@ var p = w + x;//0.3000...4--because floating conversion thingy from binary
 
 var q = z - x;//0.3
 
-var r = y - w;//0.3
+var r = y - w;//0.3...4
 console.log("p is:"+p);
 console.log("q is:"+q);
 console.log("r is:"+r);
