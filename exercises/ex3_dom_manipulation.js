@@ -34,16 +34,33 @@ button.addEventListener("click", addChildToViz);
 // Task
 // Where can you see the results of the console.log below? How is it different from in previous exercises?
 
-function drawIrisData() {
-  window
-    .fetch("./iris_json.json")
-    .then(data => data.json())
-    .then(data => {
-      console.log(data);
-    });
+function drawIrisData(thewidth, theheight) {
+
+  const viz = document.querySelector(".viz");
+  const newChild = document.createElement("div");
+    newChild.className = "rectangle";
+    newChild.style.height = theheight*10+'px';
+    newChild.style.width = thewidth*10+'px';
+    viz.appendChild(newChild);
+
+    
 }
 
-drawIrisData();
+
+
+
+window
+  .fetch("./iris_json.json")
+  .then(data => data.json())
+  .then(data => {
+    data.forEach(item=>{
+      drawIrisData(item.petalwidth, item.petallength );
+      console.log("Drawing rectangle for item:", item);
+
+    });
+    
+});
+
 
 // Task
 // Modify the code above to visualize the Iris dataset in the preview of index.html.
