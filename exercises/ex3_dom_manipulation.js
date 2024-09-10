@@ -47,8 +47,6 @@ function drawIrisData(thewidth, theheight) {
 }
 
 
-
-
 window
   .fetch("./iris_json.json")
   .then(data => data.json())
