@@ -1,1 +1,1 @@
-# majorStudio1
+lab02_smithsonian_apilab02_smithsonian_api# majorStudio1

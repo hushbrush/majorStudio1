@@ -27,7 +27,7 @@ var test3 = test1 === test2;
 // Task
 // Change this code so test4 is false and test5 is true. Use console.log() to confirm your cod works.
 
-var test4 = 0 === "";
+var test4 = 0 === ""; //type is the same hence true, that's what === does
 var test5 = 1 == "1";
 
 console.log("test4 is", test4, "and test 5 is", test5);
@@ -42,6 +42,7 @@ var z = 0.5;
 var p = w + x;//0.3000...4--because floating conversion thingy from binary
 
 var q = z - x;//0.3
+
 
 var r = y - w;//0.3...4
 console.log("p is:"+p);
