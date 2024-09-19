@@ -3,15 +3,15 @@
 // Using this data set https://collections.si.edu/search/results.htm?q=Flowers&view=grid&fq=data_source%3A%22Cooper+Hewitt%2C+Smithsonian+Design+Museum%22&fq=online_media_type%3A%22Images%22&media.CC0=true&fq=object_type:%22Embroidery+%28visual+works%29%22
 
 // put your API key here;
-const apiKey = "UIlZKqadOeQus4jccmxUP9WIqyEBKgZw9cfGghuk";  
+const apiKey = "";  
 
 // search base URL
 const searchBaseURL = "https://api.si.edu/openaccess/api/v1.0/search";
 
 // constructing the initial search query
-// const search =  'mask AND unit_code:"FSG"';
-const search =  `dinosaurs AND unit_code:"NMNHBIRDS"`;
-//AND object_type:"Embroidery (visual works)" AND online_media_type:"Images"
+
+const search =  "online_visual_material:true AND type:edanmdm AND national stamp collection";
+
 
 // array that we will write into
 let myArray = [];
@@ -22,6 +22,7 @@ let jsonString = '';
 // search: fetches an array of terms based on term category
 function fetchSearchData(searchTerm) {
     let url = searchBaseURL + "?api_key=" + apiKey + "&q=" + searchTerm;
+   
     console.log(url);
     window
     .fetch(url)
@@ -79,7 +80,7 @@ function addObject(objectData) {
   if(objectData.content.indexedStructured.place) {
     currentPlace = objectData.content.indexedStructured.place[0];
   }
-
+//add more questions here to get more data
   myArray.push({
     id: objectData.id,
     title: objectData.title,

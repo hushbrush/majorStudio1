@@ -18,7 +18,7 @@ drawAllSVGs();
 // Draw SVG graphics using D3
 function drawIntoSVG() {
   // select the first svg object
-  const svg = d3.select(".ex-1 svg"); // this is a D3 selection
+  const svg = d3.select(".ex-1 svg"); // this is a D3 selection: class ex1, and 
 
   //  draw a circle
   svg
@@ -55,7 +55,7 @@ function drawWithData(data) {
       .join("circle") //and join data with graphics
       .attr('cy', 50)
       .attr('fill', "grey")
-      .attr('cx', function(d, i) {return 20+ i * 120;})
+      .attr('cx', function(d, i) {return 20+ i * 120;})// if you pass only i, i will be the data not the iterator and it wouldn't work because we need the iterator to find the location, not the data. and also because you need the order to be in line with the function that you're sending it to.
       .attr('r', function(d) { return d.population * 0.000002});
       
       // NOTE how the above has to scale the incoming data to place them on the screen
