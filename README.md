@@ -6,7 +6,9 @@ lab02_smithsonian_apilab02_smithsonian_api# majorStudio1
 ![TRIASSIC 3](https://github.com/user-attachments/assets/a6417aa6-eeee-4abf-a655-8a83a0bbc9c5)
 >>>>>>> 180f68e429ac566652f80d4adf664df6081b0179
 >>>>>>>
->>>>>>> ![ui_stamp_dataviz](https://github.com/user-attachments/assets/2753aee6-be92-475f-9018-f81c6e57e1ec)
+>>>>>>> !(![ui_stamp_dataviz3](https://github.com/user-attachments/assets/c1f01d63-5023-4cab-a04f-db61c51e11d5)
+)
+>>>>>>> 
 >>>>>>> ![The first 100 stamps in the collection(In the order of their dates)]
 >>>>>>> 
 
