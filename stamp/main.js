@@ -107,14 +107,11 @@ searchApi();
 
    
 function displayImage(imageUrl, x, y) {
-  const corsProxy = 'https://cors-anywhere.herokuapp.com/';
-  const proxyUrl = corsProxy + imageUrl;
-
   // Create a new Image object to get its dimensions
-  fetch(proxyUrl, {
+  fetch(imageUrl, {
       method: 'GET',
       headers: {
-          'X-Requested-With': 'XMLHttpRequest' // Adding required header
+          'X-Requested-With': 'XMLHttpRequest' // Adding required header (optional)
       }
   })
   .then(response => {
@@ -160,6 +157,7 @@ function displayImage(imageUrl, x, y) {
       console.error('Error loading image:', error);
   });
 }
+
 
 
 
