@@ -25,7 +25,8 @@ let jsonString = '';
       
     
       let pageSize = 1000;
-      let numberOfQueries = Math.ceil(data.response.rowCount / pageSize);
+      let numberOfQueries = 5;
+       //Math.ceil(data.response.rowCount / pageSize);
       console.log(numberOfQueries)
       for(let i = 0; i < numberOfQueries; i++) {
         if (i == (numberOfQueries - 1)) {
@@ -92,9 +93,9 @@ function addObject(objectData) {
   }
  img_link = objectData.content.descriptiveNonRepeating.online_media.media[0].guid;
 // Convert to HTTPS if necessary
-if (img_link.startsWith('http:')) {
-  img_link = img_link.replace('http:', 'https:');
-}
+// if (img_link.startsWith('http:')) {
+//   img_link = img_link.replace('http:', 'https:');
+// }
 
 idArray.push({
     id: objectData.id,
@@ -110,9 +111,11 @@ searchApi();
 
    
 function displayImage(imageUrl, x, y) {
-  // Create a new Image object to get its dimensions
-  fetch(imageUrl, {
+  const proxyUrl = 'https://thingproxy.freeboard.io/';
+fetch(proxyUrl + imageUrl, {
       method: 'GET',
+       mode: 'cors',
+  credentials: 'include',
       headers: {
           'X-Requested-With': 'XMLHttpRequest' // Adding required header (optional)
       }
@@ -160,8 +163,6 @@ function displayImage(imageUrl, x, y) {
       console.error('Error loading image:', error);
   });
 }
-
-
 
 
 
