@@ -114,11 +114,9 @@ function displayImage(imageUrl, x, y) {
   const proxyUrl = 'https://thingproxy.freeboard.io/';
 fetch(proxyUrl + imageUrl, {
       method: 'GET',
-       mode: 'cors',
+       mode: 'no-cors',
   credentials: 'include',
-      headers: {
-          'X-Requested-With': 'XMLHttpRequest' // Adding required header (optional)
-      }
+      headers: 'Access-Control-Allow-Origin'
   })
   .then(response => {
       if (!response.ok) {
