@@ -112,12 +112,15 @@ searchApi();
    
 function displayImage(imageUrl, x, y) {
   const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-fetch(proxyUrl + imageUrl, {
-      method: 'GET',
-       mode: 'no-cors',
-  credentials: 'include',
-      headers: 'Access-Control-Allow-Origin'
+  fetch(proxyUrl + imageUrl, {
+    method: 'GET',
+    mode: 'no-cors',
+    credentials: 'include',
+    headers: {
+      'Access-Control-Allow-Origin': '*'
+    }
   })
+  
   .then(response => {
       if (!response.ok) {
           throw new Error('Network response was not ok');
