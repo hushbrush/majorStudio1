@@ -107,44 +107,61 @@ searchApi();
 
    
 function displayImage(imageUrl, x, y) {
-  // Create a new Image object to get its dimensions
-  let img = new Image();
   const corsProxy = 'https://cors-anywhere.herokuapp.com/';
-img.src = corsProxy + imageUrl;
-  // img.src = imageUrl;
+  const proxyUrl = corsProxy + imageUrl;
 
-  img.onload = function() {
-      // Getting dominant colour
-      Vibrant.from(img).getPalette((err, palette) => {
-          if (err) {
-              console.error("Error getting color palette:", err);
-              return;
-          }
+  // Create a new Image object to get its dimensions
+  fetch(proxyUrl, {
+      method: 'GET',
+      headers: {
+          'X-Requested-With': 'XMLHttpRequest' // Adding required header
+      }
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('Network response was not ok');
+      }
+      return response.blob(); // Get the response as a Blob
+  })
+  .then(blob => {
+      const img = new Image();
+      img.src = URL.createObjectURL(blob); // Create an object URL for the Blob
 
-          // Access the colors in the palette
-          const vibrantColor = palette.Vibrant.getHex(); // Get vibrant color in hex format
-          const mutedColor = palette.Muted.getHex();     // Get muted color in hex format
+      img.onload = function() {
+          // Getting dominant colour
+          Vibrant.from(img).getPalette((err, palette) => {
+              if (err) {
+                  console.error("Error getting color palette:", err);
+                  return;
+              }
 
-          // Append the SVG image element
-          svg.append('image')
-              .attr('x', x)
-              .attr('y', y)
-              .attr('width', img.width / 10) // Adjust if needed
-              .attr('height', img.height / 10) // Adjust if needed
-              .attr('href', img.src); // Use 'href' for image source in SVG
+              const vibrantColor = palette.Vibrant.getHex();
+              const mutedColor = palette.Muted.getHex();
 
-          // Append a rectangle on the left side of the image
-          svg.append('rect')
-              .attr('x', x) // X coordinate of the rectangle (same as image)
-              .attr('y', y) // Y coordinate of the rectangle (same as image)
-              .attr('width', (img.width / 10) / 2) // Half the width of the image
-              .attr('height', img.height / 10) // Same height as the image
-              .attr('fill', vibrantColor) // Fill color
-              .attr('stroke', mutedColor) // Optional stroke
-              .attr('stroke-width', 2); // Optional stroke width
-      });
-  };
+              svg.append('image')
+                  .attr('x', x)
+                  .attr('y', y)
+                  .attr('width', img.width / 10) // Adjust if needed
+                  .attr('height', img.height / 10) // Adjust if needed
+                  .attr('href', img.src); // Use 'href' for image source in SVG
+
+              svg.append('rect')
+                  .attr('x', x) // X coordinate of the rectangle (same as image)
+                  .attr('y', y) // Y coordinate of the rectangle (same as image)
+                  .attr('width', (img.width / 10) / 2) // Half the width of the image
+                  .attr('height', img.height / 10) // Same height as the image
+                  .attr('fill', vibrantColor) // Fill color
+                  .attr('stroke', mutedColor) // Optional stroke
+                  .attr('stroke-width', 2); // Optional stroke width
+          });
+      };
+  })
+  .catch(error => {
+      console.error('Error loading image:', error);
+  });
 }
+
+
 
 
 
