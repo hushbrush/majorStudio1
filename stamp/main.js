@@ -1,5 +1,10 @@
 
-   const apiKey = ''; 
+//step 1: find the dominant colour
+//step 2: display it in a rectangle vertically half of the stamp
+//step 3: figure out how we'll filter it after that. That's step 3. Don't get ahead of yourself. Just do step 1 and 2 for now. You're good. chill chill chill chill chill chill chill.
+
+
+   const apiKey = 'UIlZKqadOeQus4jccmxUP9WIqyEBKgZw9cfGghuk'; 
    const contentApiUrl = `https://api.si.edu/openaccess/api/v1.0/content/`;
    const searchApiUrl ="https://api.si.edu/openaccess/api/v1.0/search";
    let ID;
@@ -53,17 +58,17 @@ function fetchAllData(url) {
     
     jsonString += JSON.stringify(idArray);
     console.log(idArray);
-    
+    let counter=0;
     if (idArray.length > 0) {
       sortYear(idArray);
-      
-      for (let i = 0; i < 5; i++) {
-        let rgbArray = [];
-        displayImage(idArray[i].imageLink);
-        const Sentiment = require('sentiment');
-        const sentiment = new Sentiment(idArray[i].title);
-        const result = sentiment.analyze();
-        console.log(result);  // { score: 3, comparative: 0.75, ... }
+      for (let i = 0; i < 5; i++) 
+      {
+       for(let j=0; j<5; j++)
+        {
+          displayImage(idArray[counter].imageLink, i*160, j*110 );
+
+          counter++;
+        }
       }
     }
   })
@@ -96,21 +101,52 @@ idArray.push({
   })
 }
 
+const svg = d3.select('svg');
 
 searchApi();
 
    
-function displayImage(imageUrl) {
-  const imgContainer = document.getElementById('image-container');
+function displayImage(imageUrl, x, y) {
+  // Create a new Image object to get its dimensions
+  let img = new Image();
+  const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+img.src = corsProxy + imageUrl;
+  // img.src = imageUrl;
 
-  // Create an img element and set its src attribute to the image URL
-  const img = document.createElement('img');
-  img.src = imageUrl;
-  img.alt = 'Image from API';
-  img.style.maxWidth = '10%'; // Ensure the image fits within the container
-  // Append the image to the container
-  svg.appendChild(img);
+  img.onload = function() {
+      // Getting dominant colour
+      Vibrant.from(img).getPalette((err, palette) => {
+          if (err) {
+              console.error("Error getting color palette:", err);
+              return;
+          }
+
+          // Access the colors in the palette
+          const vibrantColor = palette.Vibrant.getHex(); // Get vibrant color in hex format
+          const mutedColor = palette.Muted.getHex();     // Get muted color in hex format
+
+          // Append the SVG image element
+          svg.append('image')
+              .attr('x', x)
+              .attr('y', y)
+              .attr('width', img.width / 10) // Adjust if needed
+              .attr('height', img.height / 10) // Adjust if needed
+              .attr('href', img.src); // Use 'href' for image source in SVG
+
+          // Append a rectangle on the left side of the image
+          svg.append('rect')
+              .attr('x', x) // X coordinate of the rectangle (same as image)
+              .attr('y', y) // Y coordinate of the rectangle (same as image)
+              .attr('width', (img.width / 10) / 2) // Half the width of the image
+              .attr('height', img.height / 10) // Same height as the image
+              .attr('fill', vibrantColor) // Fill color
+              .attr('stroke', mutedColor) // Optional stroke
+              .attr('stroke-width', 2); // Optional stroke width
+      });
+  };
 }
+
+
 
 function sortYear(idArray)
 {
@@ -122,63 +158,3 @@ function sortYear(idArray)
   
 }
 
-//   const img = new Image();
-        //   img.crossOrigin = 'Anonymous'; // Handle CORS if necessary
-        //   const proxyUrl = 'https://cors-anywhere.herokuapp.com/corsdemo'
-        //   img.src = proxyUrl+idArray[i].imageLink;
-        //   img.onload = () => {
-        //     // Once the image is loaded, draw it on the canvas
-        //     const canvas = document.getElementById('canvas');
-        //     const ctx = canvas.getContext('2d');
-            
-        //     // Set canvas size to match the image size
-        //     canvas.width = img.width;
-        //     canvas.height = img.height;
-
-        //     // Draw the image on the canvas
-        //     ctx.drawImage(img, 0, 0);
-        //     console.log("image drawn");
-
-        //     // Get the image data
-        //     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        //     const data = imageData.data;
-        //     console.log("data:" +data);
-
-           
-        //     // Process each pixel
-        //     for (let i = 0; i < data.length; i += 4) {
-        //         const r = data[i];
-        //         const g = data[i + 1];
-        //         const b = data[i + 2];
-        //        const a=data[i + 3];
-        //         // Store the RGB values
-        //         console.log("color: " +r+" "+g+" "+b);
-        //         rgbArray.push({ r, g, b, a });
-        //     }
-
-      
-        //   }
-        //   const color = `rgb(${rgbArray[0].r}, ${rgbArray[0].g}, ${rgbArray[0].b})`;
-        //   const svg = d3.select("svg");
-        //   svg.append("rect")
-        //   .attr("x", 50) // X position
-        //   .attr("y", 50) // Y position
-        //   .attr("width", 10)  // Width of the rectangle
-        //   .attr("height", 10) // Height of the rectangle
-        //   .attr("stroke-width", 3)
-        //   .attr("stroke", "black")
-        //   .attr("fill", blue ) // Fill color of the rectangle
-        //   .attr("fill", color ); // Fill color of the rectangle
-
-              
-
-
-
-        //     // Log the RGB values to the console
-        //     console.log(rgbArray);
-        // };
-
-        // img.onerror = (error) => 
-        // {
-        //     console.error('Error loading image:', error);
-        // };
