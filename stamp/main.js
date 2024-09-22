@@ -111,7 +111,7 @@ searchApi();
 
    
 function displayImage(imageUrl, x, y) {
-  const proxyUrl = 'https://thingproxy.freeboard.io/';
+  const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
 fetch(proxyUrl + imageUrl, {
       method: 'GET',
        mode: 'no-cors',
