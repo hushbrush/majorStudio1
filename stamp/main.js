@@ -16,7 +16,7 @@ let jsonString = '';
    function searchApi()
    {
     let url = searchApiUrl + "?api_key=" + apiKey + "&q=" + "online_visual_material:true AND type:edanmdm AND U.S. Stamps";
-    console.log(url);
+    
     window
     .fetch(url)
     .then(res => res.json())
@@ -66,7 +66,7 @@ function fetchAllData(url) {
        for(let j=0; j<10; j++)
         {
           displayImage(idArray[counter].imageLink, i*160, j*110 );
-
+          
           counter++;
         }
       }
@@ -91,7 +91,10 @@ function addObject(objectData) {
     stamp_date = objectData.content.freetext.date[0].content;
   }
  img_link = objectData.content.descriptiveNonRepeating.online_media.media[0].guid;
-  
+// Convert to HTTPS if necessary
+if (img_link.startsWith('http:')) {
+  img_link = img_link.replace('http:', 'https:');
+}
 
 idArray.push({
     id: objectData.id,
