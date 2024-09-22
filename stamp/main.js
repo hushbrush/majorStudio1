@@ -117,7 +117,8 @@ function displayImage(imageUrl, x, y) {
     mode: 'no-cors',
     credentials: 'include',
     headers: {
-      'Access-Control-Allow-Origin': '*'
+      'Accept': 'application/json',  // example header
+      'Content-Type': 'application/json' // example header
     }
   })
   
