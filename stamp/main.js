@@ -61,9 +61,9 @@ function fetchAllData(url) {
     let counter=0;
     if (idArray.length > 0) {
       sortYear(idArray);
-      for (let i = 0; i < 5; i++) 
+      for (let i = 0; i < 10; i++) 
       {
-       for(let j=0; j<5; j++)
+       for(let j=0; j<10; j++)
         {
           displayImage(idArray[counter].imageLink, i*160, j*110 );
 
