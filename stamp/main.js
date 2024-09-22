@@ -14,16 +14,7 @@ let ID;
 
 let idArray = [];
 let jsonString = '';
-const colorRanges = {
-  red:    { min: [200, 0, 0], max: [255, 100, 100] },
-  orange: { min: [200, 100, 0], max: [255, 165, 0] },
-  yellow: { min: [200, 200, 0], max: [255, 255, 100] },
-  green:  { min: [0, 200, 0], max: [100, 255, 100] },
-  blue:   { min: [0, 0, 200], max: [100, 100, 255] },
-  violet: { min: [100, 0, 200], max: [200, 100, 255] },
-  black:  { min: [0, 0, 0], max: [50, 50, 50] },
-  white:  { min: [200, 200, 200], max: [255, 255, 255] },
-};
+
 
 
 function searchApi()
@@ -84,7 +75,7 @@ function fetchAllData(url) {
           displayImage(idArray[counter].imageLink, x, y );
           findColor(counter, idArray[counter].imageLink );
           displaycolor(counter, x,y );
-          //tagColor(idArray[index].color)
+          console.log(x+":"+idArray[counter].color+":"+tagColor(idArray[counter].color));
           
           counter++;
         }
@@ -129,7 +120,6 @@ function displayImage(imageUrl, x, y) {
               .attr('x', x+20)
               .attr('y', y)
               .attr('height', 110) // Adjust size
-              //.attr('width', 160) // allows to render in height but without the 
               .attr('href', imageUrl); // Use URL directly in SVG
 
         
@@ -145,23 +135,15 @@ function displaycolor(index, x, y)
   .attr('y', y) // Y coordinate of the rectangle (same as image)
   .attr('width', 20) // Half the width of the image
   .attr('height', 110) // Same height as the image
-  .attr('fill', 'blue')
- // .attr('fill', `rgba(${idArray[index].color[0]}, ${idArray[index].color[1]}, ${idArray[index].color[2]}, ${idArray[index].color[3]})`)//might have to change this if the colour comes in hex eventually.
+  .attr('fill', `rgba(${idArray[index].color[0]}, ${idArray[index].color[1]}, ${idArray[index].color[2]}, ${idArray[index].color[3]})`)//might have to change this if the colour comes in hex eventually.
  
 }
 
 
 function findColor(index, imageUrl)
 {
-
   //this stuff will give me the real colour but is flagging cors issues, working without that for now
-  //Using Vibrant directly with the image URL
-  const img = new Image();
-  img.crossOrigin = 'Anonymous';
-  img.src = imageUrl; // + '?not-from-cache-please';
-
-  const v = new Vibrant(img);
-  console.log(v.getPalette());
+  //Using Vibrant directly with the image URL  
   //  Vibrant.from(imageUrl)
   //     .getPalette((err, palette) => {
   //       console.log('in get palette')
@@ -172,9 +154,9 @@ function findColor(index, imageUrl)
   //         }
 
           // Extract dominant and muted colors
-          //const vibrantColor =  [Math.ceil(Math.random()*255), Math.ceil(Math.random()*255), Math.ceil(Math.random()*255), 1]; //palette.Vibrant.getHex();
+          const vibrantColor =  [Math.ceil(Math.random()*255), Math.ceil(Math.random()*255), Math.ceil(Math.random()*255), 1]; //shoudl be palette.Vibrant.getHex(); but will get to that later
           //const mutedColor =  palette.Muted.getHex();
-         // idArray[index].color = vibrantColor; // Add the color property
+         idArray[index].color = vibrantColor; // Add the color property
        
       //   })
       //  }
@@ -184,19 +166,59 @@ function findColor(index, imageUrl)
 
 function tagColor(color)
 {
-  for (const [name, range] of Object.entries(colorRanges)) {
-    const [r, g, b] = color;
+  const [r, g, b] = color;
+  
+  // Calculate the differences between the color components
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const diff = max - min;
 
-    if (
-        r >= range.min[0] && r <= range.max[0] &&
-        g >= range.min[1] && g <= range.max[1] &&
-        b >= range.min[2] && b <= range.max[2]
-    ) {
-        return name;
+  // If max is very small, it's black or close to black
+  if (max < 50) return "black";
+
+  // If diff is very small, it's grayscale (could be white, gray, or close to white)
+  if (diff < 30 && max > 200) return "white";
+  if (diff < 30) return "gray";
+
+  // If red is dominant
+  if (r > g && r > b) {
+    if (g > b) {
+      if (r - g <50) return "yellow"; // Close to orange
+     // if (80<(r - g) <90) return "brown";
+    return "red";
     }
+    return "pink";
+  }
+
+  // If green is dominant
+  if (g > r && g > b) {
+    if (b > r) {
+      return "green-blue"; // Cyan is green + blue
+    }
+    return "green";
+  }
+
+  // If blue is dominant
+  if (b > r && b > g) {
+    if (r > g) {
+      return "violet"; // Close to violet/purple
+    }
+    return "blue";
+  }
+
+  // If it's a mixture of red and green (yellow)
+  if (r > 200 && g > 200 && b < 100) {
+    return "orange?";
+  }
+
+  // Brown (mix of red and some green, but low blue)
+  if (r > 100 && g > 50 && b < 50) {
+    return "brown";
+  }
+
+  return "unknown"; // Default for undefined colors
 }
-return "unknown"; // or any default value
-}
+
 
 
 
