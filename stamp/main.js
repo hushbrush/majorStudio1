@@ -4,6 +4,9 @@
 //2. add another tag in the object that in words tells you what the colour is.
 //either, I can hover over them to see all the other colours that are that colour,
 //scroll
+//its ok its ok its ok
+//lets try taking the colour wihtout vibrant
+//it might work
 
 let ID;
 let idArray = [];
@@ -31,7 +34,7 @@ function callEverything() {
       console.log(idArray);
 
       let counter = 0;
-     
+      //findColor(counter, idArray[counter].imageLink);
       
       
       if (idArray.length > 0) {
@@ -46,7 +49,7 @@ function callEverything() {
             //scaling(size);
             displayImage(idArray[counter].imageLink, x, y, size);
             
-            findColor(counter, idArray[counter].imageLink);
+             findColor(counter, idArray[counter].imageLink);
             
             idArray[counter].tag = tagColor(idArray[counter].color);
             displaycolor(counter, x, y);
@@ -125,11 +128,8 @@ async function findColor(index, imageUrl)
       var vibrantColor= palette.Vibrant.getHex(); 
       vibrantColor = hexToRGB(vibrantColor)
           
-     // var vibrantColor= [Math.ceil(Math.random()*255), Math.ceil(Math.random()*255), Math.ceil(Math.random()*255)];
-      idArray[index].color = vibrantColor; 
-          
-         
-       
+     //var vibrantColor= [Math.ceil(Math.random()*255), Math.ceil(Math.random()*255), Math.ceil(Math.random()*255)];
+     idArray[index].color = vibrantColor; 
         })
 }
 
