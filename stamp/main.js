@@ -46,8 +46,8 @@ function callEverything() {
             
             displayImage(idArray[counter].imageLink, x, y);
             findColor(counter, idArray[counter].imageLink);
-            //idArray[counter].tag = tagColor(idArray[counter].color);
-            //displaycolor(counter, x, y);
+            idArray[counter].tag = tagColor(idArray[counter].color);
+            displaycolor(counter, x, y);
 
             counter++;
           }
@@ -100,8 +100,8 @@ function displaycolor(index, x, y) {
     .attr('width', 20) 
     .attr('height', 110)
     .attr('fill', `rgba(${idArray[index].color[0]}, ${idArray[index].color[1]}, ${idArray[index].color[2]}, ${idArray[index].color[3]})`)
-    .attr('class', `stamp-rect rect-${index}`)  // Add a unique class for targeting later
-    .attr('data-color-tag', idArray[index].tag);  // Store the color tag for filtering
+    .attr('class', `stamp-rect rect-${index}`) 
+    .attr('data-color-tag', idArray[index].tag);  
 }
 
 
