@@ -3,18 +3,18 @@
 //1. store the colour in the object
 //2. add another tag in the object that in words tells you what the colour is.
 //either, I can hover over them to see all the other colours that are that colour,
+//scroll
 
 let ID;
-
 let idArray = [];
 let jsonString = '';
 
 let legcolors=["white", "violet", "blue", "green", "yellow", "orange", "red", "green-blue", "brown", "pink", "gray", "black"];
-const svg = d3.select('svg');
+const svg = d3.select('#svg');
 const leg = d3.select('leg');
-searchApi();
+callEverything();
 legend();
-function searchApi() {
+function callEverything() {
   
   fetch('stampData.json')
     .then(res => res.json())
@@ -31,20 +31,21 @@ function searchApi() {
       console.log(idArray);
 
       let counter = 0;
-
+     
+      
       
       if (idArray.length > 0) {
         sortYear(idArray);
 
         
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < idArray.length/221; i++) {
           for (let j = 0; j < 8; j++) {
             let x = j * 190;
             let y = i * 160;
 
             
             displayImage(idArray[counter].imageLink, x, y);
-            //findColor(counter, idArray[counter].imageLink);
+            findColor(counter, idArray[counter].imageLink);
             //idArray[counter].tag = tagColor(idArray[counter].color);
             //displaycolor(counter, x, y);
 
