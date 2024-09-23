@@ -8,9 +8,6 @@
 //2. add another tag in the object that in words tells you what the colour is.
 //either, I can hover over them to see all the other colours that are that colour,
 
-// const apiKey =    "vou5CccnseKk4Fv0SUZQ0o6HEKAUbxqAAV3cSgS0" //'UIlZKqadOeQus4jccmxUP9WIqyEBKgZw9cfGghuk'; 
-// const contentApiUrl = `https://api.si.edu/openaccess/api/v1.0/content/`;
-// const searchApiUrl ="https://api.si.edu/openaccess/api/v1.0/search";
 let ID;
 
 let idArray = [];
@@ -21,37 +18,51 @@ const svg = d3.select('svg');
 const leg = d3.select('leg');
 searchApi();
 legend();
-function searchApi()
-{
-let url = searchApiUrl + "?api_key=" + apiKey + "&q=" + "online_visual_material:true AND type:edanmdm AND U.S. Stamps";
-
-window
-.fetch(url)
-.then(res => res.json())
-.then(data => {
-console.log(data)
+function searchApi() {
   
+  fetch('stampData.json')
+    .then(res => res.json())
+    .then(data => {
+      console.log(data);
 
-  let pageSize = 40;
-  let numberOfQueries = 4;
-    //Math.ceil(data.response.rowCount / pageSize);//not working with all the data rn
-  console.log(numberOfQueries)
-  for(let i = 0; i < numberOfQueries; i++) {
-    if (i == (numberOfQueries - 1)) {
-    
-      searchAllURL = url + `&start=${i * pageSize}&rows=${data.response.rowCount - (i * pageSize)}`;
-    } else {
-      searchAllURL = url + `&start=${i * pageSize}&rows=${pageSize}`;
-    }
-    console.log(searchAllURL)
-    fetchAllData(searchAllURL);
-  
-  }
-})
-.catch(error => {
-  console.log(error);
-})
+      // Assuming data is an array of objects
+      // Add all objects from the JSON file into the idArray
+      data.forEach(function(n) {
+        addObject(n);
+      });
+
+      // Serialize idArray to JSON string for further use
+      jsonString += JSON.stringify(idArray);
+      console.log(idArray);
+
+      let counter = 0;
+
+      // If the idArray has data, sort and display them
+      if (idArray.length > 0) {
+        sortYear(idArray);
+
+        
+        for (let i = 0; i < 5; i++) {
+          for (let j = 0; j < 8; j++) {
+            let x = j * 150;
+            let y = i * 160;
+
+            // Display image and handle color tagging
+            displayImage(idArray[counter].imageLink, x, y);
+            findColor(counter, idArray[counter].imageLink);
+            idArray[counter].tag = tagColor(idArray[counter].color);
+            displaycolor(counter, x, y);
+
+            counter++;
+          }
+        }
+      }
+    })
+    .catch(error => {
+      console.log(error);
+    });
 }
+
 
 // // fetching all the data listed under our search and pushing them all into our custom array
 // function fetchAllData(url) {
@@ -138,15 +149,13 @@ function fetchAllData() {
 }
 
 function addObject(objectData) {  
-if(objectData.content.indexedStructured.place) {
-    currentPlace = objectData.content.indexedStructured.place[0];
+  
+  let stamp_date = null;
+  if (objectData.date && objectData.date.length > 0) {
+    stamp_date = objectData.date[0].content;  // Assuming 'date' contains an array of objects with 'content'
   }
   
-if(objectData.content.freetext.date) {
-    stamp_date = objectData.content.freetext.date[0].content;
-  }
-  
-img_link = objectData.content.descriptiveNonRepeating.online_media.media[0].guid;
+  let img_link = objectData.link;
 
 if(img_link){
   idArray.push({
@@ -185,11 +194,10 @@ function displaycolor(index, x, y) {
 function findColor(index, imageUrl)
 {
   
-   Vibrant.from("https://ids.si.edu/ids/deliveryService?id=ark:/65665/sy79a36feef96074c789e2dda827ab7ca90")
+   Vibrant.from(imageUrl)
       .getPalette((err, palette) => {
-        console.log('in get palette')
-
-          if (err) {
+        
+         if (err) {
               console.error("Error getting color palette:", err);
               return;
           }
@@ -203,7 +211,7 @@ function findColor(index, imageUrl)
        
         })
        }
-//}
+
 function hexToRGB(hex) {
   var r = parseInt(hex.slice(1, 3), 16),
       g = parseInt(hex.slice(3, 5), 16),
