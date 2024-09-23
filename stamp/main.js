@@ -8,7 +8,7 @@
 let ID;
 let idArray = [];
 let jsonString = '';
-
+let size = 110;
 let legcolors=["white", "violet", "blue", "green", "yellow", "orange", "red", "green-blue", "brown", "pink", "gray", "black"];
 const svg = d3.select('#svg');
 const leg = d3.select('leg');
@@ -18,7 +18,7 @@ function callEverything() {
   
   fetch('stampData.json')
     .then(res => res.json())
-    .then(data => {
+    .then( data => {
       console.log(data);
 
     
@@ -39,13 +39,15 @@ function callEverything() {
 
         
         for (let i = 0; i < idArray.length/221; i++) {
-          for (let j = 0; j < 8; j++) {
-            let x = j * 190;
-            let y = i * 160;
+          for (let j = 0; j < 7; j++) {
+            let x = j * size*2;
+            let y = i * (size+35);
 
+            //scaling(size);
+            displayImage(idArray[counter].imageLink, x, y, size);
             
-            displayImage(idArray[counter].imageLink, x, y);
             findColor(counter, idArray[counter].imageLink);
+            
             idArray[counter].tag = tagColor(idArray[counter].color);
             displaycolor(counter, x, y);
 
@@ -58,10 +60,15 @@ function callEverything() {
       console.log(error);
     });
 }
-
-
-
-
+function scaling()
+{
+ // switch size;
+ //if a button is pressed, increase size by 20px
+ //if another button is pressed, decrease size by 20px
+}
+function delay(milliseconds) {
+  return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
 function addObject(objectData) {  
   
   let stamp_date = null;
@@ -81,33 +88,33 @@ if(img_link){
 }
 
 }
-
-   
-function displayImage(imageUrl, x, y) 
+  
+function displayImage(imageUrl, x, y, imageheight) 
 {
   svg.append('image')
     .attr('x', x+20)
     .attr('y', y)
-    .attr('height', 110) 
+    .attr('height', imageheight) 
     .attr('href', imageUrl); 
 }
    
-
 function displaycolor(index, x, y) {
+  
+
   svg.append('rect')  // Create a rectangle for each stamp
     .attr('x', x) 
     .attr('y', y) 
     .attr('width', 20) 
     .attr('height', 110)
-    .attr('fill', `rgba(${idArray[index].color[0]}, ${idArray[index].color[1]}, ${idArray[index].color[2]}, ${idArray[index].color[3]})`)
+    .attr('fill', `rgba(${idArray[index].color[0]}, ${idArray[index].color[1]}, ${idArray[index].color[2]}, 1)`)
     .attr('class', `stamp-rect rect-${index}`) 
     .attr('data-color-tag', idArray[index].tag);  
+   
 }
 
-
-function findColor(index, imageUrl)
+async function findColor(index, imageUrl)
 {
-  
+  await delay(6000);
    Vibrant.from(imageUrl)
       .getPalette((err, palette) => {
         
@@ -115,16 +122,16 @@ function findColor(index, imageUrl)
               console.error("Error getting color palette:", err);
               return;
           }
-
-          // Extract dominant colors
+      var vibrantColor= palette.Vibrant.getHex(); 
+      vibrantColor = hexToRGB(vibrantColor)
           
-          var vibrantColor= palette.Vibrant.getHex(); 
-          vibrantColor = hexToRGB(vibrantColor);
-          idArray[index].color = vibrantColor; 
+     // var vibrantColor= [Math.ceil(Math.random()*255), Math.ceil(Math.random()*255), Math.ceil(Math.random()*255)];
+      idArray[index].color = vibrantColor; 
+          
          
        
         })
-       }
+}
 
 function hexToRGB(hex) {
   var r = parseInt(hex.slice(1, 3), 16),
@@ -133,9 +140,12 @@ function hexToRGB(hex) {
       return [ r, g, b];
   
 }
+
 function tagColor(color)
 {
+  //console.log(color);
   const [r, g, b] = color;
+  
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
   const diff = max - min;
@@ -209,9 +219,7 @@ function legend() {
         // Loop through the rectangles and match their color tag
         svg.selectAll('rect')
           .filter(function() {
-            console.log(d3.select(this).attr('data-color-tag') == hoveredColor);
-            console.log(d3.select(this).attr('data-color-tag'));
-            console.log(hoveredColor);
+            
             return d3.select(this).attr('data-color-tag') == hoveredColor;  // Check the custom color tag
           })
           .attr('opacity', 1);  // Set opacity back to 100%
