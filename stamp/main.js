@@ -1,8 +1,4 @@
 
-//cors issue:(
-//okay. leave that. Barring that, let's see what else
-//make it all the same height.
-//figure out modulartiy first
 //filtering:
 //1. store the colour in the object
 //2. add another tag in the object that in words tells you what the colour is.
@@ -25,33 +21,32 @@ function searchApi() {
     .then(data => {
       console.log(data);
 
-      // Assuming data is an array of objects
-      // Add all objects from the JSON file into the idArray
+    
       data.forEach(function(n) {
         addObject(n);
       });
 
-      // Serialize idArray to JSON string for further use
+      
       jsonString += JSON.stringify(idArray);
       console.log(idArray);
 
       let counter = 0;
 
-      // If the idArray has data, sort and display them
+      
       if (idArray.length > 0) {
         sortYear(idArray);
 
         
         for (let i = 0; i < 5; i++) {
           for (let j = 0; j < 8; j++) {
-            let x = j * 150;
+            let x = j * 190;
             let y = i * 160;
 
-            // Display image and handle color tagging
+            
             displayImage(idArray[counter].imageLink, x, y);
-            findColor(counter, idArray[counter].imageLink);
-            idArray[counter].tag = tagColor(idArray[counter].color);
-            displaycolor(counter, x, y);
+            //findColor(counter, idArray[counter].imageLink);
+            //idArray[counter].tag = tagColor(idArray[counter].color);
+            //displaycolor(counter, x, y);
 
             counter++;
           }
@@ -64,89 +59,7 @@ function searchApi() {
 }
 
 
-// // fetching all the data listed under our search and pushing them all into our custom array
-// function fetchAllData(url) {
-//   window
-//   .fetch(url)
-//   .then(res => res.json())
-//   .then(data => {
-//     console.log(data);
 
-//     data.response.rows.forEach(function(n) {
-//       addObject(n);
-//     });
-    
-//     jsonString += JSON.stringify(idArray);
-//     console.log(idArray);
-//     let counter=0;
-   
-
-//     if (idArray.length > 0) {
-//       sortYear(idArray);
-//       for (let i = 0; i <5; i++) 
-//       {
-//        for(let j=0; j<8; j++)
-//         {
-//           let x=j*150;
-//           let y=i*160;
-//           displayImage(idArray[counter].imageLink, x, y );
-//           findColor(counter, idArray[counter].imageLink );
-//           idArray[counter].tag=tagColor(idArray[counter].color)
-//           displaycolor(counter, x,y );
-          
-//           counter++;
-//         }
-//       }
-//     }
-//   })
-//   .catch(error => {
-//     console.log(error);
-//   });
-// }
-// fetching all the data from a local JSON file (stampData.json) and pushing them all into our custom array
-function fetchAllData() {
-  // Load the JSON data from stampData.json
-  fetch('stampData.json')
-    .then(response => response.json())
-    .then(data => {
-      // Assuming data is an array of objects
-      console.log(data);
-
-      data.forEach(function(n) {
-        addObject(n); // Add each object to the custom array
-      });
-    
-      // Serialize idArray to JSON string for further use
-      jsonString += JSON.stringify(idArray);
-      console.log(idArray);
-
-      let counter = 0;
-
-      // If the idArray has data, sort and display them
-      if (idArray.length > 0) {
-        sortYear(idArray);
-
-        // Display the first 5 rows of 8 items each (assuming you want a grid)
-        for (let i = 0; i < 5; i++) {
-          for (let j = 0; j < 8; j++) {
-            let x = j * 150;
-            let y = i * 160;
-            
-            // Display image and handle color tagging
-            displayImage(idArray[counter].link, x, y);
-            findColor(counter, idArray[counter].link);
-            idArray[counter].tag = tagColor(idArray[counter].color);
-            displaycolor(counter, x, y);
-            
-            counter++;
-          }
-        }
-      }
-    })
-    .catch(error => {
-      console.log(error);
-    });
-}
 
 function addObject(objectData) {  
   
@@ -226,14 +139,13 @@ function tagColor(color)
   const min = Math.min(r, g, b);
   const diff = max - min;
 
-  // If max is very small, it's black or close to black
+  
   if (max < 50) return "black";
 
-  // If diff is very small, it's grayscale (could be white, gray, or close to white)
   if (diff < 30 && max > 200) return "white";
   if (diff < 30) return "gray";
 
-  // If red is dominant
+
   if (r > g && r > b) {
     if (g > b) {
       if (r - g <50) return "orange"; // Close to orange
@@ -243,15 +155,14 @@ function tagColor(color)
     return "pink";
   }
 
-  // If green is dominant
   if (g > r && g > b) {
     if (b > r) {
-      return "green-blue"; // Cyan is green + blue
+      return "green-blue"; 
     }
     return "green";
   }
 
-  // If blue is dominant
+
   if (b > r && b > g) {
     if (r > g) {
       return "violet"; // Close to violet/purple
@@ -259,11 +170,11 @@ function tagColor(color)
     return "blue";
   }
 
-// If it's a mixture of red and green (yellow)
+
   if (r > 200 && g > 200 && b < 100) {
     return "yellow?";
   }
-// Brown (mix of red and some green, but low blue)
+
   if (r > 100 && g > 50 && b < 50) {
     return "brown";
   }
