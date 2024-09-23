@@ -16,8 +16,11 @@ let ID;
 let idArray = [];
 let jsonString = '';
 
-
-
+let legcolors=["white", "violet", "blue", "green", "yellow", "orange", "red", "green-blue", "brown", "pink", "gray", "black"];
+const svg = d3.select('svg');
+const leg = d3.select('leg');
+searchApi();
+legend();
 function searchApi()
 {
 let url = searchApiUrl + "?api_key=" + apiKey + "&q=" + "online_visual_material:true AND type:edanmdm AND U.S. Stamps";
@@ -29,8 +32,8 @@ window
 console.log(data)
   
 
-  let pageSize = 2;
-  let numberOfQueries = 1;
+  let pageSize = 40;
+  let numberOfQueries = 4;
     //Math.ceil(data.response.rowCount / pageSize);//not working with all the data rn
   console.log(numberOfQueries)
   for(let i = 0; i < numberOfQueries; i++) {
@@ -67,16 +70,17 @@ function fetchAllData(url) {
     let counter=0;
     if (idArray.length > 0) {
       sortYear(idArray);
-      for (let i = 0; i <2; i++) 
+      for (let i = 0; i <5; i++) 
       {
-       for(let j=0; j<5; j++)
+       for(let j=0; j<8; j++)
         {
           let x=j*150;
           let y=i*160;
           displayImage(idArray[counter].imageLink, x, y );
           findColor(counter, idArray[counter].imageLink );
+          idArray[counter].tag=tagColor(idArray[counter].color)
           displaycolor(counter, x,y );
-          idArray[counter].tag=tagColor(idArray[counter].color);
+          
           
           counter++;
         }
@@ -87,8 +91,6 @@ function fetchAllData(url) {
     console.log(error);
   });
 }
-
-
 
 function addObject(objectData) {  
 if(objectData.content.indexedStructured.place) {
@@ -111,35 +113,30 @@ if(img_link){
 }
 
 }
-const svg = d3.select('svg');
-const leg = d3.select('leg');
-searchApi();
 
    
-function displayImage(imageUrl, x, y) {
-            // Append image directly to SVG
-          svg.append('image')
-              .attr('x', x+20)
-              .attr('y', y)
-              .attr('height', 110) // Adjust size
-              .attr('href', imageUrl); // Use URL directly in SVG
-
-        
-      }
-   
-
-
-
-function displaycolor(index, x, y)
-{ 
-  svg.append('rect')
-  .attr('x', x) // X coordinate of the rectangle (same as image)
-  .attr('y', y) // Y coordinate of the rectangle (same as image)
-  .attr('width', 20) // Half the width of the image
-  .attr('height', 110) // Same height as the image
-  .attr('fill', `rgba(${idArray[index].color[0]}, ${idArray[index].color[1]}, ${idArray[index].color[2]}, ${idArray[index].color[3]})`)//might have to change this if the colour comes in hex eventually.
- 
+function displayImage(imageUrl, x, y) 
+{
+  svg.append('image')
+    .attr('x', x+20)
+    .attr('y', y)
+    .attr('height', 110) 
+    .attr('href', imageUrl); 
 }
+   
+
+function displaycolor(index, x, y) {
+  svg.append('rect')  // Create a rectangle for each stamp
+    .attr('x', x) 
+    .attr('y', y) 
+    .attr('width', 20) 
+    .attr('height', 110)
+    .attr('fill', `rgba(${idArray[index].color[0]}, ${idArray[index].color[1]}, ${idArray[index].color[2]}, ${idArray[index].color[3]})`)
+    .attr('class', `stamp-rect rect-${index}`)  // Add a unique class for targeting later
+    .attr('data-color-tag', idArray[index].tag);  // Store the color tag for filtering
+}
+
+
 
 function findColor(index, imageUrl)
 {
@@ -166,8 +163,6 @@ function findColor(index, imageUrl)
 function tagColor(color)
 {
   const [r, g, b] = color;
-  
-  // Calculate the differences between the color components
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
   const diff = max - min;
@@ -182,7 +177,7 @@ function tagColor(color)
   // If red is dominant
   if (r > g && r > b) {
     if (g > b) {
-      if (r - g <50) return "yellow"; // Close to orange
+      if (r - g <50) return "orange"; // Close to orange
      // if (80<(r - g) <90) return "brown";
     return "red";
     }
@@ -205,64 +200,62 @@ function tagColor(color)
     return "blue";
   }
 
-  // If it's a mixture of red and green (yellow)
+// If it's a mixture of red and green (yellow)
   if (r > 200 && g > 200 && b < 100) {
-    return "orange?";
+    return "yellow?";
   }
-
-  // Brown (mix of red and some green, but low blue)
+// Brown (mix of red and some green, but low blue)
   if (r > 100 && g > 50 && b < 50) {
     return "brown";
   }
 
-  return "unknown"; // Default for undefined colors
+  return "unknown"; 
 }
-let legcolors=["white", "violet", "blue", "green", "yellow", "orange", "red", "green-blue", "brown", "pink", "gray", "black"];
-function legend()
-{
-  let legx=screen.width-70;
-  let legy=0;
-  let w=20;
-  let h=15;
+
+function legend() {
+  let legx = screen.width - 70;
+  let legy = 0;
+  let w = 20;
+  let h = 15;
   
-  for(i=0; i<legcolors.length; i++, legy+=3*h)
-  {
+  for (let i = 0; i < legcolors.length; i++, legy += 3 * h) {
     svg.append('circle')
-    .attr('cx', legx)
-    .attr('cy', legy)
-    .attr('r', w)
-    .attr('fill', legcolors[i])
-    .on('mouseover', () => {
-        // Set all other circles to 40% opacity
-        svg.selectAll('circle') // This targets all circles
-            .attr('opacity', 0.4);
+      .attr('cx', legx)
+      .attr('cy', legy)
+      .attr('r', w)
+      .attr('fill', legcolors[i])
+      .on('mouseover', function() {
+        let hoveredColor = d3.select(this).attr('fill');  // The color of the hovered circle
+        
+        // Set all other circles and rects to 40% opacity
+        svg.selectAll('circle').attr('opacity', 0.1);
+        svg.selectAll('rect').attr('opacity', 0.1);
+        svg.selectAll('image').attr('opacity', 0.1);
         
         // Set the hovered circle to 100% opacity
-        d3.select(d3.event.target) // Select the hovered circle
-            .attr('opacity', 1);
+        d3.select(this).attr('opacity', 1);
         
-        // Optionally, set the images to the same opacity logic if needed
-        idArray.forEach(item => {
-            svg.selectAll('image')
-                .filter(d => item.tag !== legcolors[i])
-                .attr('opacity', 0.4);
-        });
-    })
-    .on('mouseout', () => {
-        // Reset opacity for all circles
-        svg.selectAll('circle')
-            .attr('opacity', 1);
-        
-        // Reset images to full opacity if you applied the opacity change above
-        svg.selectAll('image')
-            .attr('opacity', 1);
-    });
-
+        // Loop through the rectangles and match their color tag
+        svg.selectAll('rect')
+          .filter(function() {
+            console.log(d3.select(this).attr('data-color-tag') == hoveredColor);
+            console.log(d3.select(this).attr('data-color-tag'));
+            console.log(hoveredColor);
+            return d3.select(this).attr('data-color-tag') == hoveredColor;  // Check the custom color tag
+          })
+          .attr('opacity', 1);  // Set opacity back to 100%
+      })
+      .on('mouseout', function() {
+        // Reset opacity for all circles and rects when mouse leaves the legend
+        svg.selectAll('circle').attr('opacity', 1);
+        svg.selectAll('rect').attr('opacity', 1);
+        svg.selectAll('image').attr('opacity', 1);
+      });
   }
-
 }
 
-function sortYear(idArray)
+
+function sortYear(idArray) 
 {
   idArray.sort((a, b) => {
     const yearA = parseInt(a.date, 10);
@@ -272,4 +265,3 @@ function sortYear(idArray)
   
 }
 
-legend();
