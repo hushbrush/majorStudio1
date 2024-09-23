@@ -6,8 +6,9 @@
 //filtering:
 //1. store the colour in the object
 //2. add another tag in the object that in words tells you what the colour is.
+//either, I can hover over them to see all the other colours that are that colour,
 
-const apiKey = 'UIlZKqadOeQus4jccmxUP9WIqyEBKgZw9cfGghuk'; 
+const apiKey =    "vou5CccnseKk4Fv0SUZQ0o6HEKAUbxqAAV3cSgS0" //'UIlZKqadOeQus4jccmxUP9WIqyEBKgZw9cfGghuk'; 
 const contentApiUrl = `https://api.si.edu/openaccess/api/v1.0/content/`;
 const searchApiUrl ="https://api.si.edu/openaccess/api/v1.0/search";
 let ID;
@@ -28,7 +29,7 @@ window
 console.log(data)
   
 
-  let pageSize = 10;
+  let pageSize = 2;
   let numberOfQueries = 1;
     //Math.ceil(data.response.rowCount / pageSize);//not working with all the data rn
   console.log(numberOfQueries)
@@ -66,16 +67,16 @@ function fetchAllData(url) {
     let counter=0;
     if (idArray.length > 0) {
       sortYear(idArray);
-      for (let i = 0; i < 5; i++) 
+      for (let i = 0; i <2; i++) 
       {
-       for(let j=0; j<2; j++)
+       for(let j=0; j<5; j++)
         {
-          let x=i*160;
-          let y=j*150;
+          let x=j*150;
+          let y=i*160;
           displayImage(idArray[counter].imageLink, x, y );
           findColor(counter, idArray[counter].imageLink );
           displaycolor(counter, x,y );
-          console.log(x+":"+idArray[counter].color+":"+tagColor(idArray[counter].color));
+          //console.log(x+":"+idArray[counter].color+":"+tagColor(idArray[counter].color));
           
           counter++;
         }
@@ -111,6 +112,7 @@ if(img_link){
 
 }
 const svg = d3.select('svg');
+const leg = d3.select('leg');
 searchApi();
 
    
@@ -139,7 +141,6 @@ function displaycolor(index, x, y)
  
 }
 
-
 function findColor(index, imageUrl)
 {
   //this stuff will give me the real colour but is flagging cors issues, working without that for now
@@ -161,8 +162,6 @@ function findColor(index, imageUrl)
       //   })
       //  }
 }
-
-    
 
 function tagColor(color)
 {
@@ -218,9 +217,24 @@ function tagColor(color)
 
   return "unknown"; // Default for undefined colors
 }
+let legcolors=["white", "violet", "blue", "green", "yellow", "orange", "red", "green-blue", "brown", "pink", "gray", "black"];
+function legend()
+{
+  let legx=screen.width-70;
+  let legy=0;
+  let w=20;
+  let h=15;
+  
+  for(i=0; i<legcolors.length; i++, legy+=3*h)
+  {
+    svg.append('circle')
+    .attr('cx', legx)
+    .attr('cy', legy)
+    .attr('r', w)
+    .attr('fill',legcolors[i])
+  }
 
-
-
+}
 
 function sortYear(idArray)
 {
@@ -232,3 +246,4 @@ function sortYear(idArray)
   
 }
 
+legend();
