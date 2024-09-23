@@ -76,7 +76,7 @@ function fetchAllData(url) {
           displayImage(idArray[counter].imageLink, x, y );
           findColor(counter, idArray[counter].imageLink );
           displaycolor(counter, x,y );
-          //console.log(x+":"+idArray[counter].color+":"+tagColor(idArray[counter].color));
+          idArray[counter].tag=tagColor(idArray[counter].color);
           
           counter++;
         }
@@ -231,7 +231,33 @@ function legend()
     .attr('cx', legx)
     .attr('cy', legy)
     .attr('r', w)
-    .attr('fill',legcolors[i])
+    .attr('fill', legcolors[i])
+    .on('mouseover', () => {
+        // Set all other circles to 40% opacity
+        svg.selectAll('circle') // This targets all circles
+            .attr('opacity', 0.4);
+        
+        // Set the hovered circle to 100% opacity
+        d3.select(d3.event.target) // Select the hovered circle
+            .attr('opacity', 1);
+        
+        // Optionally, set the images to the same opacity logic if needed
+        idArray.forEach(item => {
+            svg.selectAll('image')
+                .filter(d => item.tag !== legcolors[i])
+                .attr('opacity', 0.4);
+        });
+    })
+    .on('mouseout', () => {
+        // Reset opacity for all circles
+        svg.selectAll('circle')
+            .attr('opacity', 1);
+        
+        // Reset images to full opacity if you applied the opacity change above
+        svg.selectAll('image')
+            .attr('opacity', 1);
+    });
+
   }
 
 }
