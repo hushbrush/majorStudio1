@@ -8,9 +8,9 @@
 //2. add another tag in the object that in words tells you what the colour is.
 //either, I can hover over them to see all the other colours that are that colour,
 
-const apiKey =    "vou5CccnseKk4Fv0SUZQ0o6HEKAUbxqAAV3cSgS0" //'UIlZKqadOeQus4jccmxUP9WIqyEBKgZw9cfGghuk'; 
-const contentApiUrl = `https://api.si.edu/openaccess/api/v1.0/content/`;
-const searchApiUrl ="https://api.si.edu/openaccess/api/v1.0/search";
+// const apiKey =    "vou5CccnseKk4Fv0SUZQ0o6HEKAUbxqAAV3cSgS0" //'UIlZKqadOeQus4jccmxUP9WIqyEBKgZw9cfGghuk'; 
+// const contentApiUrl = `https://api.si.edu/openaccess/api/v1.0/content/`;
+// const searchApiUrl ="https://api.si.edu/openaccess/api/v1.0/search";
 let ID;
 
 let idArray = [];
@@ -53,43 +53,88 @@ console.log(data)
 })
 }
 
-// fetching all the data listed under our search and pushing them all into our custom array
-function fetchAllData(url) {
-  window
-  .fetch(url)
-  .then(res => res.json())
-  .then(data => {
-    console.log(data);
+// // fetching all the data listed under our search and pushing them all into our custom array
+// function fetchAllData(url) {
+//   window
+//   .fetch(url)
+//   .then(res => res.json())
+//   .then(data => {
+//     console.log(data);
 
-    data.response.rows.forEach(function(n) {
-      addObject(n);
-    });
+//     data.response.rows.forEach(function(n) {
+//       addObject(n);
+//     });
     
-    jsonString += JSON.stringify(idArray);
-    console.log(idArray);
-    let counter=0;
-    if (idArray.length > 0) {
-      sortYear(idArray);
-      for (let i = 0; i <5; i++) 
-      {
-       for(let j=0; j<8; j++)
-        {
-          let x=j*150;
-          let y=i*160;
-          displayImage(idArray[counter].imageLink, x, y );
-          findColor(counter, idArray[counter].imageLink );
-          idArray[counter].tag=tagColor(idArray[counter].color)
-          displaycolor(counter, x,y );
+//     jsonString += JSON.stringify(idArray);
+//     console.log(idArray);
+//     let counter=0;
+   
+
+//     if (idArray.length > 0) {
+//       sortYear(idArray);
+//       for (let i = 0; i <5; i++) 
+//       {
+//        for(let j=0; j<8; j++)
+//         {
+//           let x=j*150;
+//           let y=i*160;
+//           displayImage(idArray[counter].imageLink, x, y );
+//           findColor(counter, idArray[counter].imageLink );
+//           idArray[counter].tag=tagColor(idArray[counter].color)
+//           displaycolor(counter, x,y );
           
-          
-          counter++;
+//           counter++;
+//         }
+//       }
+//     }
+//   })
+//   .catch(error => {
+//     console.log(error);
+//   });
+// }
+// fetching all the data from a local JSON file (stampData.json) and pushing them all into our custom array
+function fetchAllData() {
+  // Load the JSON data from stampData.json
+  fetch('stampData.json')
+    .then(response => response.json())
+    .then(data => {
+      // Assuming data is an array of objects
+      console.log(data);
+
+      data.forEach(function(n) {
+        addObject(n); // Add each object to the custom array
+      });
+    
+      // Serialize idArray to JSON string for further use
+      jsonString += JSON.stringify(idArray);
+      console.log(idArray);
+
+      let counter = 0;
+
+      // If the idArray has data, sort and display them
+      if (idArray.length > 0) {
+        sortYear(idArray);
+
+        // Display the first 5 rows of 8 items each (assuming you want a grid)
+        for (let i = 0; i < 5; i++) {
+          for (let j = 0; j < 8; j++) {
+            let x = j * 150;
+            let y = i * 160;
+            
+            // Display image and handle color tagging
+            displayImage(idArray[counter].link, x, y);
+            findColor(counter, idArray[counter].link);
+            idArray[counter].tag = tagColor(idArray[counter].color);
+            displaycolor(counter, x, y);
+            
+            counter++;
+          }
         }
       }
-    }
-  })
-  .catch(error => {
-    console.log(error);
-  });
+    })
+    .catch(error => {
+      console.log(error);
+    });
 }
 
 function addObject(objectData) {  
@@ -137,29 +182,35 @@ function displaycolor(index, x, y) {
 }
 
 
-
 function findColor(index, imageUrl)
 {
-  //this stuff will give me the real colour but is flagging cors issues, working without that for now
-  //Using Vibrant directly with the image URL  
-  //  Vibrant.from(imageUrl)
-  //     .getPalette((err, palette) => {
-  //       console.log('in get palette')
+  
+   Vibrant.from("https://ids.si.edu/ids/deliveryService?id=ark:/65665/sy79a36feef96074c789e2dda827ab7ca90")
+      .getPalette((err, palette) => {
+        console.log('in get palette')
 
-  //         if (err) {
-  //             console.error("Error getting color palette:", err);
-  //             return;
-  //         }
+          if (err) {
+              console.error("Error getting color palette:", err);
+              return;
+          }
 
-          // Extract dominant and muted colors
-          const vibrantColor =  [Math.ceil(Math.random()*255), Math.ceil(Math.random()*255), Math.ceil(Math.random()*255), 1]; //shoudl be palette.Vibrant.getHex(); but will get to that later
-          //const mutedColor =  palette.Muted.getHex();
-         idArray[index].color = vibrantColor; // Add the color property
+          // Extract dominant colors
+          
+          var vibrantColor= palette.Vibrant.getHex(); 
+          vibrantColor = hexToRGB(vibrantColor);
+          idArray[index].color = vibrantColor; 
+         
        
-      //   })
-      //  }
+        })
+       }
+//}
+function hexToRGB(hex) {
+  var r = parseInt(hex.slice(1, 3), 16),
+      g = parseInt(hex.slice(3, 5), 16),
+      b = parseInt(hex.slice(5, 7), 16);
+      return [ r, g, b];
+  
 }
-
 function tagColor(color)
 {
   const [r, g, b] = color;
