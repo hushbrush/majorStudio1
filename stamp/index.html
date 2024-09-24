@@ -1,38 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <meta charset="UTF-8" />
-    <title>U.S. Stamp Collection.</title>
+    <title>U.S. Stamp Collection</title>
     <style>
         body, h1 {
-            font-family: "Courier New", Courier, monospace;
-            font-size: 56px; /* Change the font size for the heading */
+            font-family: "Abril Fatface";
+            font-size: 70px;
+            padding-top: 0px;
+            padding-left: 10px;  
+            left: 00px;
+            position: fixed; 
+            color: rgb(203, 147, 79);
+            background-color: rgb(255, 255, 255);
         }
-        leg {
-        width: 200px;
-        height: 50px;
-        background-color: rgb(159, 81, 81);
-        position: absolute;
-        top: 50px; 
-        left: 50px;
-        
-    }
-    svg {
-        width: 1920px;
-        height: 1080px;
-        background-color: white;
-       
-      
-    }
-        
+
+        /* Styling the legend */
+        #legend-canv {
+            width: 1080px;
+            height: 50px;
+            background-color: rgb(255, 255, 255); /* Light background for contrast */
+            position: fixed; 
+            top: 160px; 
+            padding-left: 10px;  
+            left: 0px; 
+            
+        }
+
+        /* Styling the scrollable SVG container */
+        #svg-container {
+            width: 1920px;
+            height: 1080px;
+            overflow-y: scroll; /* Enable vertical scrolling */
+            padding-top: 270px;
+            padding-left: 0px;
+            background-color: rgb(255, 255, 255);
+            
+        }
+
+        /* Ensure the SVG takes the full width */
+        #svg {
+            width: 1920px;
+            height: 290400px;
+            left: -10px;
+            
+        }
     </style>
-     <script src="https://d3js.org/d3.v7.min.js"></script>
-     <script src="https://unpkg.com/node-vibrant@latest/dist/vibrant.min.js"></script>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/node-vibrant@latest/dist/vibrant.min.js"></script>
     <script src="main.js" defer></script>
 </head>
 <body>
-   
     <h1>U.S. Stamp Collection</h1>
-    <svg id="svg" width="1920" height="10800"></svg>
+    
+    <!-- Scrollable SVG container -->
+    <div id="svg-container">
+        <svg id="svg"></svg>
+    </div>
+
+    <!-- Fixed legend element -->
+    <div id="legend-canv">
+        <svg id="leg"></svg>
+    </div>
 </body>
 </html>

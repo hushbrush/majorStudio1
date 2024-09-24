@@ -1,20 +1,14 @@
 
-//filtering:
-//1. store the colour in the object
-//2. add another tag in the object that in words tells you what the colour is.
-//either, I can hover over them to see all the other colours that are that colour,
-//scroll
-//its ok its ok its ok
-//lets try taking the colour wihtout vibrant
-//it might work
+//edit design in terms of h1, and highlightin the filteration
+
+
 
 let ID;
 let idArray = [];
 let jsonString = '';
 let size = 110;
-let legcolors=["white", "violet", "blue", "green", "yellow", "orange", "red", "green-blue", "brown", "pink", "gray", "black"];
+let legcolors=["violet", "blue", "green", "yellow", "red", "gray",];
 const svg = d3.select('#svg');
-const leg = d3.select('leg');
 callEverything();
 legend();
 function callEverything() {
@@ -41,17 +35,18 @@ function callEverything() {
         sortYear(idArray);
 
         
-        for (let i = 0; i < idArray.length/221; i++) {
-          for (let j = 0; j < 7; j++) {
-            let x = j * size*2;
+        for (let i = 0; i < 220; i++) {
+          for (let j = 0; j < 8; j++) {
+            let x = j * size*1.9;
             let y = i * (size+35);
 
             //scaling(size);
-            displayImage(idArray[counter].imageLink, x, y, size);
+            
             
              findColor(counter, idArray[counter].imageLink);
             
             idArray[counter].tag = tagColor(idArray[counter].color);
+            displayImage(idArray[counter].imageLink, x, y, size, idArray[counter].tag);
             displaycolor(counter, x, y);
 
             counter++;
@@ -92,13 +87,14 @@ if(img_link){
 
 }
   
-function displayImage(imageUrl, x, y, imageheight) 
+function displayImage(imageUrl, x, y, imageheight, colorTag ) 
 {
   svg.append('image')
     .attr('x', x+20)
     .attr('y', y)
     .attr('height', imageheight) 
-    .attr('href', imageUrl); 
+    .attr('href', imageUrl)
+    .attr('data-color-tag', colorTag);  // Add color tag to the image element
 }
    
 function displaycolor(index, x, y) {
@@ -117,20 +113,20 @@ function displaycolor(index, x, y) {
 
 async function findColor(index, imageUrl)
 {
-  await delay(6000);
-   Vibrant.from(imageUrl)
-      .getPalette((err, palette) => {
+  // await delay(6000);
+  //  Vibrant.from(imageUrl)
+  //     .getPalette((err, palette) => {
         
-         if (err) {
-              console.error("Error getting color palette:", err);
-              return;
-          }
-      var vibrantColor= palette.Vibrant.getHex(); 
-      vibrantColor = hexToRGB(vibrantColor)
+  //        if (err) {
+  //             console.error("Error getting color palette:", err);
+  //             return;
+  //         }
+  //     var vibrantColor= palette.Vibrant.getHex(); 
+  //     vibrantColor = hexToRGB(vibrantColor)
           
-     //var vibrantColor= [Math.ceil(Math.random()*255), Math.ceil(Math.random()*255), Math.ceil(Math.random()*255)];
-     idArray[index].color = vibrantColor; 
-        })
+     var vibrantColor= [Math.ceil(Math.random()*255), Math.ceil(Math.random()*255), Math.ceil(Math.random()*255)];
+      idArray[index].color = vibrantColor; 
+    //     })
 }
 
 function hexToRGB(hex) {
@@ -159,16 +155,16 @@ function tagColor(color)
 
   if (r > g && r > b) {
     if (g > b) {
-      if (r - g <50) return "orange"; // Close to orange
-     // if (80<(r - g) <90) return "brown";
+      if (r - g <50) return "yellow"; // Close to orange
+      if (80<(r - g) <90) return "red";
     return "red";
     }
-    return "pink";
+    return "red";
   }
 
   if (g > r && g > b) {
     if (b > r) {
-      return "green-blue"; 
+      return "green"; 
     }
     return "green";
   }
@@ -194,42 +190,98 @@ function tagColor(color)
 }
 
 function legend() {
-  let legx = screen.width - 70;
+
+  let legx = 240;
   let legy = 0;
-  let w = 20;
-  let h = 15;
+  let w = 30;
+  let h = 30;
   
-  for (let i = 0; i < legcolors.length; i++, legy += 3 * h) {
-    svg.append('circle')
-      .attr('cx', legx)
-      .attr('cy', legy)
-      .attr('r', w)
+  const leg = d3.select('#leg')
+  .attr('viewBox', '0 0 1080 200');
+  
+ 
+
+  leg.append('text')
+  .attr('x', 20)  // Center the text horizontally (adjust as necessary)
+  .attr('y', 20)   // Position the text above the circles
+  .attr('text-anchor', 'left')  // Center align the text
+  .attr('font-size', '24px')  // Set the font size
+  .attr('fill', 'lightGray')  // Set the font color
+  .text('Filter by colours:');  // The text content
+
+
+  for (let i = 0; i < legcolors.length; i++, legx+= 1.5*h) {
+    // if(i==4)
+    // {
+    //   legy += 1.5*h;
+    //   legx=20;
+    // }
+    leg.append('rect')
+      .attr('x', legx)
+      .attr('y', legy)
+      .attr('width', w)
+      .attr('height', h)
       .attr('fill', legcolors[i])
       .on('mouseover', function() {
-        let hoveredColor = d3.select(this).attr('fill');  // The color of the hovered circle
         
-        // Set all other circles and rects to 40% opacity
-        svg.selectAll('circle').attr('opacity', 0.1);
-        svg.selectAll('rect').attr('opacity', 0.1);
-        svg.selectAll('image').attr('opacity', 0.1);
+          let hoveredColor = d3.select(this).attr('fill');  // The color of the hovered circle
         
-        // Set the hovered circle to 100% opacity
-        d3.select(this).attr('opacity', 1);
+          // Set all other circles and rects to 40% opacity
+          svg.selectAll('rect').attr('opacity', 0.1);
+          svg.selectAll('image').attr('opacity', 0.1);
+          
+          // Set the hovered circle to 100% opacity
+          d3.select(this).attr('opacity', 1);
+          
+          // Loop through the rectangles and match their color tag
+          svg.selectAll('rect')
+            .filter(function() {
+              
+              return d3.select(this).attr('data-color-tag') == hoveredColor;  // Check the custom color tag
+            })
+            .attr('opacity', 1);  // Set opacity back to 100%
+          svg.selectAll('image')
+            .filter(function() {
+              return d3.select(this).attr('data-color-tag') == hoveredColor;  // Use 'data-color-tag' instead of 'tag'
+            })
+            .attr('opacity', 1);  // Set opacity back to 100%
         
-        // Loop through the rectangles and match their color tag
-        svg.selectAll('rect')
-          .filter(function() {
-            
-            return d3.select(this).attr('data-color-tag') == hoveredColor;  // Check the custom color tag
-          })
-          .attr('opacity', 1);  // Set opacity back to 100%
+       
+        
       })
       .on('mouseout', function() {
-        // Reset opacity for all circles and rects when mouse leaves the legend
-        svg.selectAll('circle').attr('opacity', 1);
+        
+           // Reset opacity for all circles and rects when mouse leaves the legend
         svg.selectAll('rect').attr('opacity', 1);
         svg.selectAll('image').attr('opacity', 1);
-      });
+        
+       
+        
+      })
+      .on('click', function() {
+        
+        const clickedColor = d3.select(this).attr('fill');
+        
+        // Toggle selection
+        if (selectedColor == clickedColor) {
+          
+            // Reset the selection
+            selectedColor = null;
+            svg.selectAll('rect').attr('opacity', 1);
+            svg.selectAll('image').attr('opacity', 1);
+        
+        } else {
+            // Set the new selected color
+            selectedColor = clickedColor;
+            
+            // Update opacity for selected color
+            svg.selectAll('rect').attr('opacity', d => d3.select(this).attr('data-color-tag') === selectedColor ? 1 : 0.1);
+            svg.selectAll('image').attr('opacity', d => d3.select(this).attr('data-color-tag') === selectedColor ? 1 : 0.1);
+        }
+    });
+
+
+      
   }
 }
 
