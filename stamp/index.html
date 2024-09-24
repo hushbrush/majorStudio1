@@ -12,10 +12,19 @@
             font-size: 70px;
             padding-top: 0px;
             padding-left: 10px;  
-            left: 00px;
-            position: fixed; 
             color: rgb(203, 147, 79);
-            background-color: rgb(255, 255, 255);
+            position: relative; /* Change to relative to allow proper positioning of fixed elements */
+        }
+
+        #fixed-rectangle {
+            position: fixed;  /* Make it fixed to the viewport */
+            top: 0;          /* Align to the top */
+            left: 50%;       /* Center it horizontally */
+            transform: translateX(-50%);  /* Center it based on its width */
+            width: 1080px;   /* Set the desired width */
+            height: 300px;   /* Set the desired height */
+            background-color: rgb(255, 255, 255);  /* Set the background color to white */
+            z-index: -1;     /* Ensure it is behind other elements */
         }
 
         /* Styling the legend */
@@ -25,9 +34,7 @@
             background-color: rgb(255, 255, 255); /* Light background for contrast */
             position: fixed; 
             top: 160px; 
-            padding-left: 10px;  
-            left: 0px; 
-            
+            left: 10px; /* Adjust left position to match padding */
         }
 
         /* Styling the scrollable SVG container */
@@ -35,18 +42,14 @@
             width: 1920px;
             height: 1080px;
             overflow-y: scroll; /* Enable vertical scrolling */
-            padding-top: 270px;
-            padding-left: 0px;
+            padding-top: 70px;
             background-color: rgb(255, 255, 255);
-            
         }
 
         /* Ensure the SVG takes the full width */
         #svg {
             width: 1920px;
             height: 290400px;
-            left: -10px;
-            
         }
     </style>
 
@@ -55,6 +58,7 @@
     <script src="main.js" defer></script>
 </head>
 <body>
+    <div id="fixed-rectangle"></div>
     <h1>U.S. Stamp Collection</h1>
     
     <!-- Scrollable SVG container -->

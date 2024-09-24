@@ -1,5 +1,6 @@
 
 //edit design in terms of h1, and highlightin the filteration
+//if hover on image, tooltip with details
 
 
 
@@ -41,10 +42,7 @@ function callEverything() {
             let y = i * (size+35);
 
             //scaling(size);
-            
-            
-             findColor(counter, idArray[counter].imageLink);
-            
+            findColor(counter, idArray[counter].imageLink);
             idArray[counter].tag = tagColor(idArray[counter].color);
             displayImage(idArray[counter].imageLink, x, y, size, idArray[counter].tag);
             displaycolor(counter, x, y);
