@@ -1,91 +1,107 @@
 
-//edit design in terms of h1, and highlightin the filteration
-//if hover on image, tooltip with details
 
 
 
+let image_name;
 let ID;
 let idArray = [];
 let jsonString = '';
 let size = 110;
-let legcolors=["violet", "blue", "green", "yellow", "red", "gray",];
+let legcolors=["violet", "blue", "green", "yellow", "red", "beige"];
 const svg = d3.select('#svg');
+
 callEverything();
 legend();
+
+
+
+function animateStackedBar() {
+  const stackData = prepareStackedData(idArray);
+  const { xScale, yScale } = defineScales(stackData, idArray);
+
+  // Hide current grid elements
+  svg.selectAll('image').attr('opacity', 0);
+
+  // Transition to the stacked bar layout
+  svg.selectAll('rect')
+      .data(stackData)
+      .transition()
+      .duration(1000)
+      .attr('x', (d, i) => xScale(d.data.year))  // X-axis based on year
+      .attr('y', d => yScale(d[1]))  // Stack vertically
+      .attr('height', d => yScale(d[0]) - yScale(d[1]))  // Adjust height
+      .attr('width', xScale.bandwidth());  // Adjust width to band scale
+  
+  // Draw the axes if necessary
+  drawAxes(xScale, yScale);
+}
+
+
+
+
 function callEverything() {
   
   fetch('stampData.json')
     .then(res => res.json())
-    .then( data => {
+    .then( async data => {
       console.log(data);
-
-    
       data.forEach(function(n) {
+        
         addObject(n);
       });
 
-      
       jsonString += JSON.stringify(idArray);
       console.log(idArray);
 
       let counter = 0;
-      //findColor(counter, idArray[counter].imageLink);
-      
       
       if (idArray.length > 0) {
-        sortYear(idArray);
-
-        
-        for (let i = 0; i < 220; i++) {
-          for (let j = 0; j < 8; j++) {
-            let x = j * size*1.9;
-            let y = i * (size+35);
-
-            //scaling(size);
-            findColor(counter, idArray[counter].imageLink);
-            idArray[counter].tag = tagColor(idArray[counter].color);
-            displayImage(idArray[counter].imageLink, x, y, size, idArray[counter].tag);
-            displaycolor(counter, x, y);
-
-            counter++;
-          }
-        }
+      sortYear(idArray);
+      for (let i = 0; i < 215; i++) 
+          {
+            for (let j = 0; j < 8; j++) 
+              {
+              let x = j * size*1.9;
+              let y = i * (size+35);
+              await findColor(counter, './images/'+idArray[counter].id+'.jpg');//the colour is there inside this function but not there outside, why?
+              console.log("colour:"+idArray[counter].color+"at counter" +counter);
+              idArray[counter].tag = tagColor(idArray[counter].color);
+              displayImage(idArray[counter].imageLink, x, y, size, idArray[counter].tag);
+              displaycolor(counter, x, y);
+              counter++;
+            
+          
       }
-    })
+    }
+}})
     .catch(error => {
       console.log(error);
     });
 }
-function scaling()
-{
- // switch size;
- //if a button is pressed, increase size by 20px
- //if another button is pressed, decrease size by 20px
-}
-function delay(milliseconds) {
-  return new Promise(resolve => setTimeout(resolve, milliseconds));
-}
-function addObject(objectData) {  
+
+
+
+
+async function addObject(objectData) {  
   
   let stamp_date = null;
   if (objectData.date && objectData.date.length > 0) {
-    stamp_date = objectData.date[0].content;  // Assuming 'date' contains an array of objects with 'content'
+    stamp_date = objectData.date[0].content;  
   }
-  
   let img_link = objectData.link;
 
-if(img_link){
-  idArray.push({
-    id: objectData.id,
-    title: objectData.title,
-    imageLink: img_link,
-    date: stamp_date
-  })
+  if(img_link){
+    idArray.push({
+      id: objectData.id,
+      title: objectData.title,
+      imageLink: objectData.link,
+      date: stamp_date
+    })
+  }
+  
 }
 
-}
-  
-function displayImage(imageUrl, x, y, imageheight, colorTag ) 
+async function displayImage(imageUrl, x, y, imageheight, colorTag ) 
 {
   svg.append('image')
     .attr('x', x+20)
@@ -109,23 +125,36 @@ function displaycolor(index, x, y) {
    
 }
 
-async function findColor(index, imageUrl)
-{
-  // await delay(6000);
-  //  Vibrant.from(imageUrl)
-  //     .getPalette((err, palette) => {
-        
-  //        if (err) {
-  //             console.error("Error getting color palette:", err);
-  //             return;
-  //         }
-  //     var vibrantColor= palette.Vibrant.getHex(); 
-  //     vibrantColor = hexToRGB(vibrantColor)
+function findColor(index, imageUrl) {
+  return new Promise((resolve, reject) => {
+    
+
+      setTimeout(() => {
+          console.log("Finding color for:", imageUrl);  // Test the asynchronous flow
+          console.log("at:", index)
           
-     var vibrantColor= [Math.ceil(Math.random()*255), Math.ceil(Math.random()*255), Math.ceil(Math.random()*255)];
-      idArray[index].color = vibrantColor; 
-    //     })
-}
+          Vibrant.from(imageUrl)
+              .getPalette((err, palette) => {
+                
+                 if (err) {
+                      console.error("Error getting color palette at "+imageUrl, err);
+                      
+                      return;
+                  }
+              var vibrantColor= palette.Vibrant.getHex(); 
+          vibrantColor = hexToRGB(vibrantColor);
+
+          // Assign the color to idArray
+          idArray[index].color = vibrantColor;
+
+          console.log("Color found:", vibrantColor);  // To confirm this runs before continuing
+
+          // Resolve the promise to signal completion
+          resolve();
+      }, 1000);  
+  });
+})}
+
 
 function hexToRGB(hex) {
   var r = parseInt(hex.slice(1, 3), 16),
@@ -137,18 +166,19 @@ function hexToRGB(hex) {
 
 function tagColor(color)
 {
-  //console.log(color);
+  console.log(color);
   const [r, g, b] = color;
   
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
   const diff = max - min;
 
-  
-  if (max < 50) return "black";
+  if(((r+g+b)>600)&&b<100)
+    return "beige"
+  if (max < 70) return "black";
 
-  if (diff < 30 && max > 200) return "white";
-  if (diff < 30) return "gray";
+  if (diff < 30 && max > 200) return "beige";
+  // if (diff < 30) return "gray";
 
 
   if (r > g && r > b) {
@@ -184,7 +214,7 @@ function tagColor(color)
     return "brown";
   }
 
-  return "unknown"; 
+  return "black"; 
 }
 
 function legend() {
@@ -294,3 +324,21 @@ function sortYear(idArray)
   
 }
 
+async function imageExists(imageUrl) {
+  try {
+    // Try to fetch the image with a GET request
+    const response = await fetch(imageUrl);
+    
+    // If the response is OK (status 200), the image exists
+    return response.ok;
+  } catch (error) {
+    // If there's an error (e.g., network error), return false
+    console.error("Error checking image:", error);
+    return false;
+  }
+}
+
+
+function delay(milliseconds) {
+  return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
