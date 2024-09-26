@@ -51,6 +51,19 @@
             width: 1920px;
             height: 30000px;
         }
+        #tooltip {
+            position: absolute;
+            visibility: hidden;
+            background: rgba(235, 151, 48);
+            border: 1px solid #ffffff;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 18px;
+            color: white;
+            pointer-events: none; /* Prevent the tooltip from capturing mouse events */
+            z-index: 10; /* Make sure it appears above other elements */
+        }
+
     </style>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -60,7 +73,7 @@
 <body>
     <div id="fixed-rectangle"></div>
     <h1>U.S. Stamp Collection</h1>
-    <button id="toggleView">Macro</button>
+  
 
     <!-- Scrollable SVG container -->
     <div id="svg-container">
@@ -71,5 +84,7 @@
     <div id="legend-canv">
         <svg id="leg"></svg>
     </div>
+    <div id="tooltip" style="position: absolute; visibility: hidden; background: rgba(235, 151, 48, 0.8); padding: 8px; border-radius: 5px; pointer-events: none;"></div>
+
 </body>
 </html>

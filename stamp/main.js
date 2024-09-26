@@ -66,7 +66,7 @@ function callEverything() {
               await findColor(counter, './images/'+idArray[counter].id+'.jpg');//the colour is there inside this function but not there outside, why?
               console.log("colour:"+idArray[counter].color+"at counter" +counter);
               idArray[counter].tag = tagColor(idArray[counter].color);
-              displayImage(idArray[counter].imageLink, x, y, size, idArray[counter].tag);
+              displayImage(idArray[counter].imageLink, x, y, size, idArray[counter].tag, idArray[counter].title, idArray[counter].date );
               displaycolor(counter, x, y);
               counter++;
             
@@ -101,15 +101,31 @@ async function addObject(objectData) {
   
 }
 
-async function displayImage(imageUrl, x, y, imageheight, colorTag ) 
-{
-  svg.append('image')
-    .attr('x', x+20)
-    .attr('y', y)
-    .attr('height', imageheight) 
-    .attr('href', imageUrl)
-    .attr('data-color-tag', colorTag);  // Add color tag to the image element
+async function displayImage(imageUrl, x, y, imageheight, colorTag, title, date) {
+  const image = svg.append('image')
+      .attr('x', x + 20)
+      .attr('y', y)
+      .attr('height', imageheight)
+      .attr('href', imageUrl)
+      .attr('data-color-tag', colorTag)
+      .on('mouseover', function (event) {
+          const tooltip = d3.select('#tooltip');
+          tooltip.html(`Title: ${title}<br>Date: ${date}`) // Set tooltip content
+              .style('visibility', 'visible') // Show tooltip
+              .style('left', (event.pageX + 5) + 'px') // Position tooltip
+              .style('top', (event.pageY - 28) + 'px');
+      })
+      .on('mousemove', function (event) {
+          d3.select('#tooltip')
+              .style('left', (event.pageX + 5) + 'px') // Update position
+              .style('top', (event.pageY - 28) + 'px');
+      })
+      .on('mouseout', function () {
+          d3.select('#tooltip')
+              .style('visibility', 'hidden'); // Hide tooltip
+      });
 }
+
    
 function displaycolor(index, x, y) {
   
