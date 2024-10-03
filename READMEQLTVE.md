@@ -25,10 +25,12 @@ International stamp collection
 Stacked bar per decade.
 
 
+![Uploading Screenshot 2024-10-03 at 12.35.33 PM.png…]()
+
+
 <img width="1257" alt="Screenshot 2024-10-03 at 12 35 33 PM" src="https://github.com/user-attachments/assets/488a0d06-1771-4c39-bd5b-fce1fba97938">
+
 <img width="1322" alt="Scre<img width="1042" alt="Screenshot 2024-10-03 at 12 40 13 PM" src="https://github.com/user-attachments/assets/487d569d-92c7-4b1d-bbb2-aa4973c2eb5b">
-enshot 2024-10-03 at 12 39 00 PM" src="https://github.com/user-attachments/assets/7578297e-610f-45df-8d7c-28f8f211a706">
-<img width="1042" alt="Screenshot 2024-10-03 at 12 40 13 PM" src="https://github.com/user-attachments/assets/013300ae-8075-489f-80c3-57bb3497e1b3">
 
 
 
