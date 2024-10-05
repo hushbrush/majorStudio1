@@ -18,6 +18,8 @@ lab02_smithsonian_apilab02_smithsonian_api# majorStudio1
 
 
 
+
+
 Lisa: 
 It looks like the command may not have been executed properly, as there’s an incomplete "pipe cursh quote" at the end of the shell script. This indicates that there may have been a typing or formatting issue when running the script. Let me guide you through the process to ensure everything works.
 
