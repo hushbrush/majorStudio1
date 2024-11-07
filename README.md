@@ -12,7 +12,7 @@ lab02_smithsonian_apilab02_smithsonian_api# majorStudio1
 >>>>>>> ![The first 100 stamps in the collection(In the order of their dates)]
 >>>>>>> 
 
-<img width="1728" alt="stamps2-min" src="https://github.com/user-attachments/assets/99ac92c8-8120-4838-9816-772f1de97a2b">
+<img width="1728" style="transform: rotate(90deg) alt="stamps2-min" src="https://github.com/user-attachments/assets/99ac92c8-8120-4838-9816-772f1de97a2b">
 <img width="1728" alt="stamps-min" src="https://github.com/user-attachments/assets/c13f244e-1700-4d49-a736-4b2f0936f8d2">
 
 
