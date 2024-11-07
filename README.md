@@ -87,19 +87,12 @@ done
 
 A3:
 
-![WHAT MAKES IT 1](https://github.com/user-attachments/assets/78903143-a454-4479-9e48-f9880be4bcd9)
+![WHAT MAKES IT 1](https://github.com/user-attachments/assets/c7471dd4-240b-4e21-8692-96f5adbf9fbe)
+
+![WHAT MAKES IT 2](https://github.com/user-attachments/assets/cdddb6cb-8f59-4fe8-9427-cebb136965ce)
 
 
 
-![WHAT MAKES IT 4](https://github.com/user-attachments/assets/a9555ce3-960b-4641-a95b-7cff3cd99526)
-
-![WHAT MAKES IT 2](https://github.com/user-attachments/assets/d36fa8cf-6020-4a4d-9499-c59ce939e54f)
-
-![WHAT MAKES IT 3](https://github.com/user-attachments/assets/1ed95154-206b-4ba7-bbb8-a7d398b2b096)
-
-
-
-![WHAT MAKES IT 5](https://github.com/user-attachments/assets/da1d1402-9b6b-40e2-ba3e-fc84769ef4f2)
 
 
 
