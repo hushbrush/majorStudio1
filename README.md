@@ -87,10 +87,8 @@ done
 
 A3:
 
-![WHAT MAKES IT 1](https://github.com/user-attachments/assets/c7471dd4-240b-4e21-8692-96f5adbf9fbe)
 
-![WHAT MAKES IT 2](https://github.com/user-attachments/assets/cdddb6cb-8f59-4fe8-9427-cebb136965ce)
-
+![WHAT MAKES IT 1](https://github.com/user-attachments/assets/8ea2322b-14e7-49ee-9382-143773d2b9dc)
 
 
 
