@@ -75,3 +75,31 @@ done
 - The script uses `jq` to extract `url`, `id`, and `date` from the JSON file, sorts the entries by date, and downloads the images.
 - Make sure the JSON file is formatted correctly and available at the specified path.
 
+
+
+
+
+
+
+
+
+
+
+A3:
+
+
+![WHAT MAKES IT 1](https://github.com/user-attachments/assets/08678f1c-54c3-41af-bb44-588dd114
+
+![WHAT MAKES IT 2](https://github.com/user-attachments/assets/af7bfa3c-7675-41d6-b977-4340047d4680)
+4b82)
+![WHAT MAKES IT 3](https://github.com/user-attachments/assets/6ccbce21-d174-4857-94ab-e32ddbf354c1)
+
+![WHAT MAKES IT 4](https://github.com/user-attachments/assets/a9555ce3-960b-4641-a95b-7cff3cd99526)
+
+
+
+
+![WHAT MAKES IT 5](https://github.com/user-attachments/assets/da1d1402-9b6b-40e2-ba3e-fc84769ef4f2)
+
+
+
