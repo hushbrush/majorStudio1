@@ -94,11 +94,6 @@ A3:
 ![3](https://github.com/user-attachments/assets/41c46069-632e-40dd-b87e-77486bba16d2)
 
 
-![WHAT MAKES IT 2](https://github.com/user-attachments/assets/bd77459c-81ce-4f89-8660-3e3d92e6625b)
-
-
-![WHAT MAKES IT 3](https://github.com/user-attachments/assets/a2c63972-c56d-4eb8-a358-41a3fa4bf9e4)
-
 
 ![WHAT MAKES IT 4](https://github.com/user-attachments/assets/11fae476-e3c4-4d80-8225-257dad7e406a)
 
