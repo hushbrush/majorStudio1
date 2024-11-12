@@ -86,17 +86,21 @@ done
 
 
 A3:
-
+OPTION 1:
 ![1](https://github.com/user-attachments/assets/2c272e2d-bb1f-4f5d-91ec-c1a716f385bf)
 
+
+OPTION 2:
 ![2](https://github.com/user-attachments/assets/15e0f49d-0e56-4ac9-8163-75636b25f0c1)
 
 ![3](https://github.com/user-attachments/assets/41c46069-632e-40dd-b87e-77486bba16d2)
 
-![4 2](https://github.com/user-attachments/assets/1fe7d9e7-20a8-43a5-a600-6c0c0dd3cb2a)
+OPTION 3:
 ![4 1](https://github.com/user-attachments/assets/22d1a7d5-5928-4394-a5b1-4ecc94a9eaf4)
+![4 2](https://github.com/user-attachments/assets/1fe7d9e7-20a8-43a5-a600-6c0c0dd3cb2a)
 
 
 
+OPTION 4:
 ![WHAT MAKES IT 5](https://github.com/user-attachments/assets/c2c3ad2d-84e7-4540-b526-e63aebe9af53)
 
