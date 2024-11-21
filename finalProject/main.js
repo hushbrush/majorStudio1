@@ -530,14 +530,6 @@ function createBucketChart(data) {
 
 
 
-
-
-
-
-
-
-
-
 function createParallelChart(data) {
     console.log("Creating horizontal parallel coordinates plot with sliders");
 
@@ -615,7 +607,7 @@ function createParallelChart(data) {
         axisGroup.append("g")
             .attr("class", "brush")
             .call(d3.brushX()
-                .extent([[0, -10], [width, 10]]) // Brush area
+                .extent([[0, -10], [width, 20]]) // Brush area
                 .on("start brush end", function (event) {
                     const selection = event.selection;
                     if (selection) {
