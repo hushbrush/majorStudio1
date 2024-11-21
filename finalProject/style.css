@@ -59,6 +59,7 @@ img {
 #barZone svg {
     width: 100%; /* Make sure the SVG fills the container */
     height: 100%;
+    background-color: rgb(240, 234, 214);
 }
 #barChart {
     display: flex;
@@ -72,6 +73,13 @@ img {
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    height: 100%;
+}
+#parallelChart {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
     width: 100%;
     height: 100%;
 }

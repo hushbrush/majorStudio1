@@ -1,6 +1,7 @@
 
 
 
+let primaryColour = "#f0ead6", secondaryColour = "#000", tertiaryColour = "#00A0B0";
 
 
 let i, cleanedData, indexedData=[], bucketedData=[]; 
@@ -15,7 +16,6 @@ let  maxIndex;
   const maxdenomination = 20;
   const maxperforation = 12;
   const maxdate = 30;
-  const maxscarcity = 40;
   const maxcollection = 5;
   const maxprinter = 5;
 async function loadData() {
@@ -106,15 +106,20 @@ function analyseData(data) {
         // Extract original price from `obj.title`
         const regex = /(\$?\d+(\.\d+)?[c\$]?)/;
         if (regex.test(obj.title)) {
-            obj.orgPrice = obj.title.match(regex)[0];
+            const match = obj.title.match(regex)[0];
+            if (match.includes('$')) {
+                const dollars = parseFloat(match.replace(/[^\d.-]/g, ''));
+                const cents = Math.round(dollars * 100);
+                obj.orgPrice = cents + "c";
+            } else {
+                obj.orgPrice = match;
+            }
         } else if (obj.title.includes('cent')) {
             const match = obj.title.match(/\d+/);
             obj.orgPrice = match ? match[0] + "c" : "NA";
         } else {
             obj.orgPrice = "NA";
-        }
-
-        // Check for specific terms in `obj.title`
+        }     // Check for specific terms in `obj.title`
         if (obj.title.includes('plate')) {
             obj.ssp = "proof plate";
         } else if (obj.title.includes('single')) {
@@ -159,11 +164,16 @@ async function runCode() {
         bucketedData[i] = classifyStampByBucket(indexedData[i]);
         
     }
-   console.log(bucketedData[2].thumbnail)
+
     createRadarChart(bucketedData[2].allIndices)
     createBucketChart(bucketedData);
     createParallelChart(bucketedData);
-    bucketedData.filter(data => data.index > 160).forEach(data => console.log(data));
+
+    // if(bucketedData.allIndices)
+    //     {
+    //         bucketedData.filter(data => data.allIndices.perforation > 0).forEach(data => console.log(data));
+    
+    //     }
 }
 
 runCode();
@@ -183,6 +193,14 @@ function createStampIndex(stamp) {
         conditionIndex = 5;
     }
     index += conditionIndex;
+
+    // Perforation Types (e.g., perf 12, Grill)
+    let perforationIndex = 0;
+    if (stamp.description && (stamp.description.includes("perf 12") || stamp.description.includes("grill"))) {
+        perforationIndex = 12;
+        
+    }
+    index += perforationIndex;
 
    // rarity of the Stamp (max 25)
     let rarityIndex = 0;
@@ -209,20 +227,36 @@ function createStampIndex(stamp) {
     let historicalSignificanceIndex = 0;
     if (stamp.topics) {
         for (let topic of stamp.topics) {
-            if (topic.includes("Civil War") || topic.includes("World War") || topic.includes("Expedition") || topic.includes("Revolution") || topic.includes("Historic Event")) {
+            if (topic.match(/(Civil War|World War|Expedition|Revolution|Historic Event|Colonial|Empire|Independence|Liberation|Rebellion|Suffrage|Equality|Socialism|Communism|Uprising|Holocaust|Genocide|Economic Crisis|Depression|Renaissance|Enlightenment|Art Movement|Labor Movement|Globalization|Exploration)/i)) {
                 historicalSignificanceIndex = 30;
-                break; 
+                break;
             }
         }
     }
     index += historicalSignificanceIndex;
+    
 
-    // Famous Individuals (Washington, Franklin, etc.) max: 5
     let famousFiguresIndex = 0;
-    if (stamp.title && (stamp.title.includes("Washington") || stamp.title.includes("Franklin") || stamp.title.includes("Lincoln") || stamp.title.includes("Roosevelt") || stamp.title.includes("Byrd"))) {
-        famousFiguresIndex = 10;
-    }
-    index += famousFiguresIndex;
+    if (stamp.title || stamp.depicts) {
+          // Expanded list of famous figures across various domains
+          const famousFigures = [
+                "Washington", "Franklin", "Lincoln", "Roosevelt", "Byrd", "Jefferson", "Adams", "Hamilton", 
+                "Jackson", "Kennedy", "Eisenhower", "Truman", "Carver", "Douglas", "King", "Obama", "Teddy Roosevelt", 
+                "Ford", "Madison", "Grant", "Patton", "Montgomery", "Churchill", "Stalin", "Lenin", "Einstein", 
+                "Newton", "Darwin", "Curie", "Galileo", "Tesla", "Pasteur", "Fermi", "Hemingway", "Twain", "Dickens", 
+                "Shakespeare", "Mozart", "Beethoven", "Van Gogh", "Picasso", "Michelangelo", "Socrates", "Aristotle", 
+                "Plato", "Confucius", "Gandhi", "Mandela", "Boudicca", "Catherine the Great", "Cleopatra", "Marie Curie",
+                "Harriet Tubman", "Rosa Parks", "Malcolm X", "Frederick Douglass", "Susan B. Anthony", "Wright Brothers", 
+                "Amelia Earhart", "Neil Armstrong", "Buzz Aldrin", "Steve Jobs", "Bill Gates", "Mark Zuckerberg", "Oprah"
+          ];
+     
+          // Check if the title or depicts includes any of the famous figures
+          if (famousFigures.some(figure => stamp.title?.includes(figure) || stamp.depicts?.includes(figure))) {
+                famousFiguresIndex = 10;
+          }
+     }
+     index += famousFiguresIndex;
+    
 
     // Denomination and Scarcity
     let denominationIndex = 0;
@@ -236,107 +270,165 @@ function createStampIndex(stamp) {
     }
     index += denominationIndex;
 
-    // Perforation Types (e.g., perf 12, Grill)
-    let perforationIndex = 0;
-    if (stamp.description && (stamp.description.includes("perf 12") || stamp.description.includes("grill"))) {
-        perforationIndex = 12;
-    }
-    index += perforationIndex;
 
-        // Date and Period of Issue
-        let dateIndex = 0;
-        const year = parseInt(stamp.date[0].substring(0, 4));
-        if (year <= 1800) {
-            dateIndex = 30;
-        } else if (year < 1900) {
-            dateIndex = 20;
-        } else if (year < 1950) {
-            dateIndex = 10;
-        }
-        index += dateIndex;
 
-    // Scarcity and Demand (e.g., Unique, Extremely Rare)
-    let scarcityIndex = 0;
-    if ( stamp.title.includes("unique") || stamp.title.includes("one-of-a-kind")) {
-        scarcityIndex = 20;
-    } else if (stamp.title && (stamp.title.includes("extremely rare") || stamp.description.includes("few known"))) {
-        scarcityIndex = 40;
+    // Date and Period of Issue
+    let dateIndex = 0;
+    const year = parseInt(stamp.date[0].substring(0, 4));
+    if (year <= 1800) {
+        dateIndex = 30;
+    } else if (year < 1900) {
+        dateIndex = 20;
+    } else if (year < 1950) {
+        dateIndex = 10;
     }
-    index += scarcityIndex;
+    index += dateIndex;
+
+ 
 
     // Collection and Catalog Info (e.g., Scott Catalogue, Imperforate, Error, etc.)
     let collectionIndex = 0;
-    if (stamp.collection && stamp.collection.includes("Scott Catalogue")) {
-        collectionIndex += 0.5;
-        if (stamp.collection.includes("P")) {
-            collectionIndex += 2;
-        }
-        if (stamp.collection.includes("X")) {
-            collectionIndex += 1.5;
-        }
-        if (stamp.collection.includes("A")) {
-            collectionIndex += 1.5;
-        }
-        if (stamp.collection.includes("imperforate")) {
-            collectionIndex += 2.5;
-        }
-        if (stamp.collection.includes("error")) {
-            collectionIndex += 3;
-        }
-        if (stamp.collection.includes("Back-of-Book")) {
-            collectionIndex += 1.5;
-        }
-        if (stamp.collection.includes("Commemorative")) {
-            collectionIndex += 1;
-        }
-        if (stamp.collection.includes("classic")) {
-            collectionIndex += 2;
-        }
-        if (stamp.collection.includes("Inverted Jenny")) {
-            collectionIndex += 5;
-        }
-        }
-    index += collectionIndex;
-
-    // Printer Information (e.g., National Bank Note Company, Bureau of Engraving and Printing)
-    let printerIndex = 0;
-    if (stamp.printer) {
-        if (stamp.printer.includes("National Bank Note Company")) {
-            printerIndex += 1;
-        } else if (stamp.printer.includes("American Bank Note Company")) {
-            printerIndex += 1;
-        } else if (stamp.printer.includes("Bureau of Engraving and Printing") || stamp.printer.includes("BEP")) {
-            printerIndex += 2;
-        } else if (stamp.printer.includes("Wells Fargo & Co.")) {
-            printerIndex += 2;
-        } else if (stamp.printer.includes("Post Office Department")) {
-            printerIndex += 0.5;
-        }
-        if (stamp.medium && stamp.medium.includes("engraving")) {
-            printerIndex += 1;
-        }
-        if (stamp.ssp && stamp.ssp === "proof plate") {
-            printerIndex += 1.5;
-        }
-        if (stamp.description && (stamp.description.includes("plate mark") || stamp.description.includes("watermark"))) {
-            printerIndex += 1.2;
-        }
-        if (stamp.printer.includes("Security Engraving and Printing")) {
-            printerIndex += 2.5;
-        }
-        if (stamp.printer.includes("Postal Press of New York")) {
-            printerIndex += 2;
-        }
-        if (stamp.printer.includes("U.S. Treasury")) {
-            printerIndex += 3;
+   
+    
+    // Ensure we're checking if the collection is present
+    if (stamp.collection) {
+        // Check if it's part of the Scott Catalogue collection
+        if (stamp.collection.includes("Scott Catalogue")) {
+            collectionIndex += 0.5; // Base value for Scott Catalogue stamps
+    
+            // Regular issues and commemorative stamps
+            if (stamp.collection.match(/USA \d+/)) { // USA Scott numbers
+                collectionIndex += 3;  // Regular USA stamps 
+            }
+            if (stamp.collection.includes("USA PR")) { collectionIndex += 3.5; } // Plate proofs
+            if (stamp.collection.includes("USA O")) { collectionIndex += 4; } // Official stamps
+            if (stamp.collection.includes("USA J")) { collectionIndex += 3.5; } // Postage Due
+            if (stamp.collection.match(/Scott Catalogue USA (\d{1,3}[A-Z0-9]*)/)) { collectionIndex += 3; } // Commemoratives
+            
+            // Famous series and errors
+            if (stamp.collection.includes("Inverted Jenny")) { collectionIndex += 5; }
+            if (stamp.collection.includes("imperforate")) { collectionIndex += 4; } // Imperforate
+            if (stamp.collection.includes("error")) { collectionIndex += 5; } // Printing errors
+            if (stamp.collection.includes("Airmail")) { collectionIndex += 4.5; }
+            if (stamp.collection.includes("classic")) { collectionIndex += 3; }
+            
+            // Specific famous stamps and errors
+            if (stamp.collection.includes("Scott Catalogue USA 11")) { collectionIndex += 5; }
+            if (stamp.collection.includes("Scott Catalogue USA 143L3")) { collectionIndex += 4; }
+            if (stamp.collection.includes("Scott Catalogue USA 44TC")) { collectionIndex += 4; }
+            if (stamp.collection.includes("Scott Catalogue CSA 6")) { collectionIndex += 6; }
+            if (stamp.collection.includes("Scott Catalogue CSA 7")) { collectionIndex += 6.5; }
+            if (stamp.collection.includes("Scott Catalogue USA 246")) { collectionIndex += 4.5; }
+            
+            // Back-of-Book stamps
+            if (stamp.collection.includes("Back-of-Book")) { collectionIndex += 3.5; }
+            if (stamp.collection.includes("Revenue")) { collectionIndex += 4.5; }
+            
+            // Additional specialized categories
+            if (stamp.collection.includes("Postal Tax")) { collectionIndex += 4; } // Tax stamps
+            if (stamp.collection.includes("Postage Due")) { collectionIndex += 3.5; }
+            if (stamp.collection.includes("Special Printing")) { collectionIndex += 4; }
+            if (stamp.collection.includes("Reprint")) { collectionIndex += 3; }
         }
     }
-    index += printerIndex;
+    
+    index += collectionIndex;
+    
+
+ 
+     
+// Define sets for printers to simplify checks
+const engravingPrinters = new Set([
+    "National Bank Note Company",
+    "American Bank Note Company",
+    "Bureau of Engraving and Printing",
+    "Wells Fargo & Co.",
+    "Post Office Department",
+    "Security Engraving and Printing",
+    "Postal Press of New York",
+    "U.S. Treasury"
+]);
+
+// Initialize printerIndex
+let printerIndex = 0;
+
+if (stamp.printer !== "NA") {
+    // Match printers and adjust the index
+    if (engravingPrinters.has(stamp.printer)) {
+        switch (stamp.printer) {
+            case "National Bank Note Company":
+            case "American Bank Note Company":
+                printerIndex += 1; // Increment for these printers
+                break;
+            case "Bureau of Engraving and Printing":
+            case "Wells Fargo & Co.":
+                printerIndex += 2; // Increment for these printers
+                break;
+            case "Security Engraving and Printing":
+                printerIndex += 2.5; // Slightly higher for Security Engraving and Printing
+                break;
+            case "Postal Press of New York":
+                printerIndex += 2; // Postal Press of New York
+                break;
+            case "U.S. Treasury":
+                printerIndex += 3; // U.S. Treasury gets the highest index boost
+                break;
+            case "Post Office Department":
+                printerIndex += 0.5; // Post Office Department gets a small boost
+                break;
+        
+            case "National Bank Note Company":
+                printerIndex += 2;
+                break;
+            case "American Bank Note Company":
+                printerIndex += 1.5;
+                break;
+            case "Bureau of Engraving and Printing":
+                printerIndex += 1.2;
+                break;
+            case "Wells Fargo & Co.":
+                printerIndex += 1;
+                break;
+            case "Post Office Department":
+                printerIndex += 0.8;
+                break;
+            case "Security Engraving and Printing":
+                printerIndex += 0.6;
+                break;
+            case "Postal Press of New York":
+                printerIndex += 0.4;
+                break;
+            case "U.S. Treasury":
+                printerIndex += 0.2;
+                break;
+            default:
+                break;
+        }
+    }
+
+    // Additional checks for engraving medium or proof plates
+    if (stamp.medium && stamp.medium.includes("engraving")) {
+        printerIndex += 1; // Engraving medium boosts the index
+    }
+    
+    if (stamp.ssp && stamp.ssp === "proof plate") {
+        printerIndex += 1.5; // Proof plate adds a larger boost
+    }
+
+    // Description check for plate mark or watermark
+    if (stamp.description && (stamp.description.includes("plate mark") || stamp.description.includes("watermark"))) {
+        printerIndex += 1.2; // Add value for plate marks or watermarks
+    }
+}
+
+// Add printerIndex to the overall index
+index += printerIndex;
+
 
     // Add the calculated index to the stamp object
     stamp.index = index;
   
-     maxIndex = maxcondition + maxrarity + maxprintingtechniques + maxedition + maxhistoricalsignificance + maxfamousfigures + maxdenomination + maxperforation + maxdate + maxscarcity + maxcollection + maxprinter;
+     maxIndex = maxcondition + maxrarity + maxprintingtechniques + maxedition + maxhistoricalsignificance + maxfamousfigures + maxdenomination + maxperforation + maxdate + maxcollection + maxprinter;
     // console.log("maxIndex:", maxIndex);
     // // Log the factors and their maximum indices
     // console.log("Condition:", conditionIndex + " / " + maxConditionIndex);
@@ -348,7 +440,6 @@ function createStampIndex(stamp) {
     // console.log("Denomination:", denominationIndex + " / " + maxDenominationIndex);
     // console.log("Perforation:", perforationIndex + " / " + maxPerforationIndex);
     // console.log("Date:", dateIndex + " / " + maxDateIndex);
-    // console.log("Scarcity:", scarcityIndex + " / " + maxScarcityIndex);
     // console.log("Collection:", collectionIndex + " / " + maxCollectionIndex);
     // console.log("Printer:", printerIndex + " / " + maxPrinterIndex);
 
@@ -363,7 +454,6 @@ function createStampIndex(stamp) {
         'denomination': denominationIndex,
         'perforation': perforationIndex,
         'date': dateIndex,
-        'scarcity': scarcityIndex,
         'collection': collectionIndex,
         'printer': printerIndex
     };
@@ -444,8 +534,8 @@ function createRadarChart(data) {
         .append("path")
         .attr("class", "radarPolygon")
         .attr("d", d => line(d))
-        .style("fill", "rgba(237, 201, 81, 0.2)")
-        .style("stroke", "rgba(237, 201, 81, 1)")
+        .style("fill", primaryColour)
+        .style("stroke", secondaryColour)
         .style("stroke-width", "2px");
 
     // Create the radar chart axes
@@ -468,7 +558,9 @@ function createRadarChart(data) {
         .attr("cx", (d, i) => rScale(d.value) * Math.cos(i * angleSlice - Math.PI / 2))
         .attr("cy", (d, i) => rScale(d.value) * Math.sin(i * angleSlice - Math.PI / 2))
         .attr("r", 4)
-        .style("fill", "rgba(237, 201, 81, 1)");
+        .style("fill", primaryColour)
+        .style("stroke", secondaryColour)
+
 
     axis.append("text")
         .attr("class", "radarLabel")
@@ -477,7 +569,8 @@ function createRadarChart(data) {
         .text(d => d.axis)
         .style("font-size", "12px")
         .style("text-anchor", "middle")
-        .style("fill", "rgba(0, 0, 0, 0.7)");
+        .style("fill", secondaryColour)
+
 }
 
 
@@ -524,17 +617,16 @@ function createBucketChart(data) {
         .on("click", function(d) {
             handleLineClick(d);
         })
-        .attr("stroke", "black")
+        .style("stroke", secondaryColour)
+        .attr("stroke-width", 2)
         .attr("opacity", 0.2);     
-         
-        
 
 }
 
 
 
 function createParallelChart(data) {
-    console.log("Creating horizontal parallel coordinates plot with sliders");
+   
 
     var margin = { top: 50, right: 50, bottom: 30, left: 50 };
     var width = 1000 - margin.left - margin.right;
@@ -590,8 +682,8 @@ function createParallelChart(data) {
                         return d3.line()(path);
                     })
                     .style("fill", "none")
-                    .style("stroke", "black") // Set the stroke color to black
-                    .style("opacity", 0.6)
+                    .style("stroke", secondaryColour)
+                    .style("opacity", 0.1)
                     .style("stroke-width", 1.5),
                 update => update, // Update unchanged
                 exit => exit.remove() // Remove lines no longer matching filter
@@ -609,13 +701,14 @@ function createParallelChart(data) {
         // Add axis label
         axisGroup.append("text")
             .attr("class", "axis-label")
-            .attr("x", width)
-            .attr("y", -10)
-            .style("text-anchor", "end")
-            .style("fill", "white") // Set the fill color to white
-            .text(dim);     // Add brush
+            .attr("x", width - 30)
+            .attr("y", -30)
+            .style("text-anchor", "center")  
+            .style("fill", secondaryColour)
+            .style("font-size", "16px")
+            .text(dim); // Set the text for the inner div          // Add brush
         selectedRanges[dim] = [xScales[dim].domain()[0], xScales[dim].domain()[1]];
-        var nonfilterColour = "black";
+        var nonfilterColour = "gray";
         axisGroup.append("g")
             .attr("class", "brush")
             .call(d3.brushX()
@@ -626,7 +719,8 @@ function createParallelChart(data) {
                         const [min, max] = selection.map(xScales[dim].invert); // Get range
                         selectedRanges[dim] = [min, max];
                         d3.select(this).select(".selection")
-                            .style("fill", "rgba(255, 255, 255, 1)");
+                            .style("fill", secondaryColour)
+                        
                         nonfilterColour = "gray";
 
                     } else {
@@ -636,22 +730,23 @@ function createParallelChart(data) {
                 })
             )
             // .selectAll(".overlay") // Select the brush overlay
-            .style("fill", nonfilterColour); // Modify the fill color of the brush overlay
+            
+            .attr("class", "selection")
+            .attr("cursor", "move")
+            .attr("fill-opacity", "1")
+            .style("stroke", secondaryColour)
+            .attr("shape-rendering", "crispEdges")
+            .attr("x", 0)
+            .attr("y", -10)
+            .attr("width", width)
+            .attr("height", 30)
+            .style("fill", primaryColour)
+
     });
 
     // Initial draw of all lines
     updateLines();
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
