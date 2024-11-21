@@ -567,9 +567,13 @@ function createRadarChart(data) {
         .attr("x", (d, i) => rScale(1.15) * Math.cos(i * angleSlice - Math.PI / 2))
         .attr("y", (d, i) => rScale(1.15) * Math.sin(i * angleSlice - Math.PI / 2))
         .text(d => d.axis)
-        .style("font-size", "12px")
         .style("text-anchor", "middle")
         .style("fill", tertiaryColour)
+        .style("font-size", "16px")
+        .style("font-weight", "bold")
+        .style("font-family", "meursault-variable, serif")
+        .style("font-size", "16px")
+        .style("font-weight", "400")
 
 }
 
@@ -628,15 +632,16 @@ function createBucketChart(data) {
 function createParallelChart(data) {
    
 
-    var margin = { top: 0, right: 20, bottom: 20, left: 0 };
+    var margin = { top: 50, right: 20, bottom: 20, left: 0 };
     var width = 1000 - margin.left - margin.right;
-    var height = 3000 - margin.top - margin.bottom;
+    var height = 3500 - margin.top - margin.bottom;
 
     const svg = d3.select("#ParallelChart")
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
+            .attr("transform", `translate(${margin.left}, ${margin.top})`);   
         
 
     const dimensions = Object.keys(data[0].allIndices);
@@ -706,8 +711,12 @@ function createParallelChart(data) {
             .style("text-anchor", "center")  
             .style("fill", tertiaryColour)
             .style("font-size", "16px")
-            .text(dim); // Set the text for the inner div          // Add brush
-        selectedRanges[dim] = [xScales[dim].domain()[0], xScales[dim].domain()[1]];
+            .style("font-weight", "bold")
+            .style("font-family", "meursault-variable, serif")
+            .style("font-size", "24px")
+            .style("font-weight", "400")
+            .text(dim); // Set the text for the inner div
+            // Add brush   selectedRanges[dim] = [xScales[dim].domain()[0], xScales[dim].domain()[1]];
         var nonfilterColour = "gray";
         axisGroup.append("g")
             .attr("class", "brush")
