@@ -1,0 +1,86 @@
+/* Apply a flex container to the body to center everything */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    text-align: center; /* Ensures text inside elements is centered */
+}
+
+/* Center and style the headings */
+h1 {
+    width: 100%;
+    max-width: 733px;
+    color: #000;
+    font-family: "Libre Caslon Text";
+    font-size: 96px;
+    font-weight: 400;
+    line-height: var(--Display-Large-Line-Height, 64px); /* 66.667% */
+    letter-spacing: var(--Display-Large-Tracking, -0.25px);
+    margin: 0; /* Remove default margin */
+}
+
+h2 {
+    width: 100%;
+    max-width: 1042px;
+    margin: 20px 0; /* Add some spacing between elements */
+}
+
+h3 {
+    width: 100%;
+    max-width: 1043px;
+    color: #000;
+    font-family: "Libre Caslon Text";
+    font-size: 24px;
+    font-weight: 400;
+    line-height: var(--Display-Small-Line-Height, 44px); /* 183.333% */
+    letter-spacing: -0.25px;
+    margin: 20px 0;
+}
+
+
+img {
+    
+    max-height: 601px;
+    height: auto; /* Maintain aspect ratio */
+    margin: 20px 0; /* Add some spacing */
+}
+#barZone {
+    width: 1000px; /* Match the width of the SVG */
+    height: 900px; /* Adjust based on the size of your SVG */
+    margin: 20px auto; /* Center the content */
+    border: 1px solid #ccc; /* Optional, to help visualize the boundaries */
+    padding: 20px;
+    text-align: center;
+}
+
+#barZone svg {
+    width: 100%; /* Make sure the SVG fills the container */
+    height: 100%;
+}
+#barChart {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+    height: 100%;
+}
+
+.bar {
+    width: 20px;
+    background-color: #007bff;
+    margin-right: 10px;
+}
+
+.bar:last-child {
+    margin-right: 0;
+}
+
+.bar-value {
+    color: #fff;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 5px;
+}
