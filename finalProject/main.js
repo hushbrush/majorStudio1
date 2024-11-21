@@ -444,7 +444,7 @@ function createRadarChart(data) {
         .append("path")
         .attr("class", "radarPolygon")
         .attr("d", d => line(d))
-        .style("fill", "rgba(237, 201, 81, 0.7)")
+        .style("fill", "rgba(237, 201, 81, 0.2)")
         .style("stroke", "rgba(237, 201, 81, 1)")
         .style("stroke-width", "2px");
 
@@ -464,6 +464,12 @@ function createRadarChart(data) {
         .style("stroke", "rgba(0, 0, 0, 0.5)")
         .style("stroke-width", "1px");
 
+    axis.append("circle") // Add circle to mark the data point on the axis
+        .attr("cx", (d, i) => rScale(d.value) * Math.cos(i * angleSlice - Math.PI / 2))
+        .attr("cy", (d, i) => rScale(d.value) * Math.sin(i * angleSlice - Math.PI / 2))
+        .attr("r", 4)
+        .style("fill", "rgba(237, 201, 81, 1)");
+
     axis.append("text")
         .attr("class", "radarLabel")
         .attr("x", (d, i) => rScale(1.15) * Math.cos(i * angleSlice - Math.PI / 2))
@@ -472,9 +478,6 @@ function createRadarChart(data) {
         .style("font-size", "12px")
         .style("text-anchor", "middle")
         .style("fill", "rgba(0, 0, 0, 0.7)");
-    
-
-
 }
 
 
@@ -587,7 +590,7 @@ function createParallelChart(data) {
                         return d3.line()(path);
                     })
                     .style("fill", "none")
-                    .style("stroke", "steelblue")
+                    .style("stroke", "black") // Set the stroke color to black
                     .style("opacity", 0.6)
                     .style("stroke-width", 1.5),
                 update => update, // Update unchanged
@@ -603,22 +606,37 @@ function createParallelChart(data) {
 
         axisGroup.call(d3.axisBottom(xScales[dim]));
 
-        // Add brush
+        // Add axis label
+        axisGroup.append("text")
+            .attr("class", "axis-label")
+            .attr("x", width)
+            .attr("y", -10)
+            .style("text-anchor", "end")
+            .style("fill", "white") // Set the fill color to white
+            .text(dim);     // Add brush
+        selectedRanges[dim] = [xScales[dim].domain()[0], xScales[dim].domain()[1]];
+        var nonfilterColour = "black";
         axisGroup.append("g")
             .attr("class", "brush")
             .call(d3.brushX()
-                .extent([[0, -10], [width, 20]]) // Brush area
+                .extent([[0, -10], [width, 30]]) // Brush area
                 .on("start brush end", function (event) {
                     const selection = event.selection;
                     if (selection) {
                         const [min, max] = selection.map(xScales[dim].invert); // Get range
                         selectedRanges[dim] = [min, max];
+                        d3.select(this).select(".selection")
+                            .style("fill", "rgba(255, 255, 255, 1)");
+                        nonfilterColour = "gray";
+
                     } else {
                         delete selectedRanges[dim]; // Clear filter
                     }
                     updateLines();
                 })
-            );
+            )
+            // .selectAll(".overlay") // Select the brush overlay
+            .style("fill", nonfilterColour); // Modify the fill color of the brush overlay
     });
 
     // Initial draw of all lines
