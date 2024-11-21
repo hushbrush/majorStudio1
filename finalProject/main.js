@@ -1,7 +1,7 @@
 
 
 
-let primaryColour = "#f0ead6", secondaryColour = "#000", tertiaryColour = "#00A0B0";
+let primaryColour = "#f0ead6", secondaryColour = "#FFF", tertiaryColour = "#fff", bandColor= "#000";
 
 
 let i, cleanedData, indexedData=[], bucketedData=[]; 
@@ -551,8 +551,8 @@ function createRadarChart(data) {
         .attr("x2", (d, i) => rScale(1) * Math.cos(i * angleSlice - Math.PI / 2))
         .attr("y2", (d, i) => rScale(1) * Math.sin(i * angleSlice - Math.PI / 2))
         .attr("class", "radarLine")
-        .style("stroke", "rgba(0, 0, 0, 0.5)")
-        .style("stroke-width", "1px");
+        .style("stroke", secondaryColour)
+        .style("stroke-width", "0.5px");
 
     axis.append("circle") // Add circle to mark the data point on the axis
         .attr("cx", (d, i) => rScale(d.value) * Math.cos(i * angleSlice - Math.PI / 2))
@@ -569,7 +569,7 @@ function createRadarChart(data) {
         .text(d => d.axis)
         .style("font-size", "12px")
         .style("text-anchor", "middle")
-        .style("fill", secondaryColour)
+        .style("fill", tertiaryColour)
 
 }
 
@@ -617,7 +617,7 @@ function createBucketChart(data) {
         .on("click", function(d) {
             handleLineClick(d);
         })
-        .style("stroke", secondaryColour)
+        .style("stroke", bandColor)
         .attr("stroke-width", 2)
         .attr("opacity", 0.2);     
 
@@ -628,7 +628,7 @@ function createBucketChart(data) {
 function createParallelChart(data) {
    
 
-    var margin = { top: 50, right: 50, bottom: 30, left: 50 };
+    var margin = { top: 0, right: 20, bottom: 20, left: 0 };
     var width = 1000 - margin.left - margin.right;
     var height = 3000 - margin.top - margin.bottom;
 
@@ -637,7 +637,7 @@ function createParallelChart(data) {
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
-        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+        
 
     const dimensions = Object.keys(data[0].allIndices);
 
@@ -652,7 +652,7 @@ function createParallelChart(data) {
     const yScale = d3.scalePoint()
         .domain(dimensions)
         .range([0, height])
-        .padding(1);
+       
 
     // Global state to track selected ranges
     const selectedRanges = {};
@@ -684,7 +684,7 @@ function createParallelChart(data) {
                     .style("fill", "none")
                     .style("stroke", secondaryColour)
                     .style("opacity", 0.1)
-                    .style("stroke-width", 1.5),
+                    .style("stroke-width", 0.5),
                 update => update, // Update unchanged
                 exit => exit.remove() // Remove lines no longer matching filter
             );
@@ -704,7 +704,7 @@ function createParallelChart(data) {
             .attr("x", width - 30)
             .attr("y", -30)
             .style("text-anchor", "center")  
-            .style("fill", secondaryColour)
+            .style("fill", tertiaryColour)
             .style("font-size", "16px")
             .text(dim); // Set the text for the inner div          // Add brush
         selectedRanges[dim] = [xScales[dim].domain()[0], xScales[dim].domain()[1]];
@@ -719,7 +719,7 @@ function createParallelChart(data) {
                         const [min, max] = selection.map(xScales[dim].invert); // Get range
                         selectedRanges[dim] = [min, max];
                         d3.select(this).select(".selection")
-                            .style("fill", secondaryColour)
+                            .style("fill", bandColor)
                         
                         nonfilterColour = "gray";
 
@@ -793,8 +793,8 @@ function handleLineClick(data) {
 
     // Create the radar chart SVG
     const radarChartSvg = radarChartContainer.append("svg")
-        .attr("width", 300)
-        .attr("height", 300);
+        .attr("width", 500)
+        .attr("height", 400);
 
     // Call the createRadarChart function to generate the chart
     createRadarChart(data.allIndices, radarChartSvg);
