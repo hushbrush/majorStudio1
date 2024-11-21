@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://use.typekit.net/lcn3jpe.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="style.css">
   <script>
     (function(d) {
@@ -27,7 +28,7 @@
   <section id="intro">
     <h2>Stamp collections and their estimated values</h2>
     <div id="introImages">
-        <img src="assets/introImage.jpg">
+    <img src="assets/introImage.jpg">
        
     </div>
     <h3>Stamps are more than just pieces of paper; they often commemorate important historical events, figures, or milestones. For collectors, owning a stamp is like owning a piece of history.<br><br>
@@ -37,8 +38,14 @@
 
     <section id="radarZone">
         <div id="radarImages">
-            <img src="Assets/radarImage.jpg">
-            <section id="radarChart"></section>
+            <div class="row">
+              <div class="col-md-6">
+                <img src="https://ids.si.edu/ids/deliveryService?id=NPM-1998_2005_15_2" width="300" height="300">
+              </div>
+              <div class="col-md-6">
+                <section id="radarChart"></section>
+              </div>
+            </div>
          </div>
          <h3> Let’s take a closer look at how these factors come together to estimate the market value of  the Smithsonian’s collection of  1412 CC0 postage stamps. </h3>
      </section>
@@ -46,6 +53,14 @@
    
     <section id="barZone">
       <section id="barChart"></section>
+      <section id="modal">
+        <div id ="modal-image-container"> </div>
+        <div id ="#modal-radar"> </div>
+        <div id ="#modal-image"> </div>
+        <div id ="modal-name"> </div>
+        <div id ="modal-desc"> </div>
+      </section>
+
        
         
       </section>
@@ -60,6 +75,9 @@
             Condition: x and y<br>
             Single/sheet: x and y</h3>
     </section>
-    
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

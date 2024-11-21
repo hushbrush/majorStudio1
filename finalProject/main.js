@@ -159,9 +159,10 @@ async function runCode() {
         bucketedData[i] = classifyStampByBucket(indexedData[i]);
         
     }
-   
-    createRadarChart(bucketedData[0].allIndices)
+   console.log(bucketedData[2].thumbnail)
+    createRadarChart(bucketedData[2].allIndices)
     createBucketChart(bucketedData);
+    createParallelChart(bucketedData);
     bucketedData.filter(data => data.index > 160).forEach(data => console.log(data));
 }
 
@@ -395,8 +396,8 @@ function classifyStampByBucket(data) {
 
 function createRadarChart(data) {
     var margin = {top: 100, right: 100, bottom: 100, left: 100},
-    width = Math.min(700, window.innerWidth - 10) - margin.left - margin.right,
-    height = Math.min(width, window.innerHeight - margin.top - margin.bottom - 20);
+    width = 300;
+    height = 300;
 
     const svg = d3.select("#radarChart")
         .append("svg")
@@ -409,22 +410,70 @@ function createRadarChart(data) {
     
     // Create the radar chart
     const radarData = Object.entries(data).map(([key, value]) => {
-        const maxKey = `max${key.charAt(0).toUpperCase() + key.slice(1)}Index`;
+        const maxKey = `max${key}`;
         const max = eval(maxKey);
-        return { axis: key, value: value / max };
+        return { axis: key, value: value / max , maxValue: max };
     });
 
-    const radarChart = new Chart(svg, {
-        w: width,
-        h: height,
-        maxValue: 1,
-        levels: 5,
-        roundStrokes: true,
-        color: d3.scaleOrdinal().range(["#EDC951", "#CC333F", "#00A0B0"]),
-    });
+    // Sort the radar data in descending order of max
+    radarData.sort((c) => c.value);
 
-    radarChart.draw(radarData);
+
+    // Create the radar chart
+    const radius = Math.min(width, height) / 2;
+    const angleSlice = Math.PI * 2 / radarData.length;
+
+    // Create the scales
+    const rScale = d3.scaleLinear()
+        .domain([0, 1])
+        .range([0, radius]);
+
+    // Create the radial line generator
+    const line = d3.lineRadial()
+        .radius(d => rScale(d.value))
+        .angle((d, i) => i * angleSlice);
+
+    // Create the radar chart container
+    const radarChart = svg.append("g")
+        .attr("transform", `translate(${width / 2}, ${height / 2})`);
+
+    // Create the radar chart polygons
+    radarChart.selectAll(".radarPolygon")
+        .data([radarData])
+        .enter()
+        .append("path")
+        .attr("class", "radarPolygon")
+        .attr("d", d => line(d))
+        .style("fill", "rgba(237, 201, 81, 0.7)")
+        .style("stroke", "rgba(237, 201, 81, 1)")
+        .style("stroke-width", "2px");
+
+    // Create the radar chart axes
+    const axis = radarChart.selectAll(".radarAxis")
+        .data(radarData)
+        .enter()
+        .append("g")
+        .attr("class", "radarAxis");
+
+    axis.append("line")
+        .attr("x1", 0)
+        .attr("y1", 0)
+        .attr("x2", (d, i) => rScale(1) * Math.cos(i * angleSlice - Math.PI / 2))
+        .attr("y2", (d, i) => rScale(1) * Math.sin(i * angleSlice - Math.PI / 2))
+        .attr("class", "radarLine")
+        .style("stroke", "rgba(0, 0, 0, 0.5)")
+        .style("stroke-width", "1px");
+
+    axis.append("text")
+        .attr("class", "radarLabel")
+        .attr("x", (d, i) => rScale(1.15) * Math.cos(i * angleSlice - Math.PI / 2))
+        .attr("y", (d, i) => rScale(1.15) * Math.sin(i * angleSlice - Math.PI / 2))
+        .text(d => d.axis)
+        .style("font-size", "12px")
+        .style("text-anchor", "middle")
+        .style("fill", "rgba(0, 0, 0, 0.7)");
     
+
 
 }
 
@@ -469,9 +518,210 @@ function createBucketChart(data) {
         .attr("y1", function (d) { return y(d.orgPrice); })
         .attr("x2", function (d, i) { return x(d.bucket) + x.bandwidth(); })
         .attr("y2", function (d) { return y(d.orgPrice); })
+        .on("click", function(d) {
+            handleLineClick(d);
+        })
         .attr("stroke", "black")
-        .attr("opacity", 0.2);
+        .attr("opacity", 0.2);     
+         
+        
 
 }
+
+
+
+
+
+
+
+
+
+
+
+function createParallelChart(data) {
+    console.log("Creating horizontal parallel coordinates plot with sliders");
+
+    var margin = { top: 50, right: 50, bottom: 30, left: 50 };
+    var width = 1000 - margin.left - margin.right;
+    var height = 3000 - margin.top - margin.bottom;
+
+    const svg = d3.select("#ParallelChart")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+    const dimensions = Object.keys(data[0].allIndices);
+
+    // Create scales for each dimension
+    const xScales = {};
+    dimensions.forEach(dim => {
+        xScales[dim] = d3.scaleLinear()
+            .domain(d3.extent(data, d => d.allIndices[dim] || 0)) // Ensure valid domains
+            .range([0, width]);
+    });
+
+    const yScale = d3.scalePoint()
+        .domain(dimensions)
+        .range([0, height])
+        .padding(1);
+
+    // Global state to track selected ranges
+    const selectedRanges = {};
+
+    // Function to filter and update lines based on brushes
+    function updateLines() {
+        const filteredData = data.filter(d => {
+            return dimensions.every(dim => {
+                const range = selectedRanges[dim];
+                const value = d.allIndices[dim];
+                return !range || (value >= range[0] && value <= range[1]);
+            });
+        });
+
+        svg.selectAll(".line")
+            .data(filteredData, d => d.id) // Use a unique identifier if available
+            .join(
+                enter => enter.append("path")
+                    .attr("class", "line")
+                    .attr("d", d => {
+                        const path = dimensions.map(dim => {
+                            const value = d.allIndices[dim];
+                            return value !== undefined && !isNaN(value)
+                                ? [xScales[dim](value), yScale(dim)]
+                                : null;
+                        }).filter(p => p !== null); // Remove null points
+                        return d3.line()(path);
+                    })
+                    .style("fill", "none")
+                    .style("stroke", "steelblue")
+                    .style("opacity", 0.6)
+                    .style("stroke-width", 1.5),
+                update => update, // Update unchanged
+                exit => exit.remove() // Remove lines no longer matching filter
+            );
+    }
+
+    // Add axes with brushes for each dimension
+    dimensions.forEach(dim => {
+        const axisGroup = svg.append("g")
+            .attr("class", "axis")
+            .attr("transform", `translate(0, ${yScale(dim)})`);
+
+        axisGroup.call(d3.axisBottom(xScales[dim]));
+
+        // Add brush
+        axisGroup.append("g")
+            .attr("class", "brush")
+            .call(d3.brushX()
+                .extent([[0, -10], [width, 10]]) // Brush area
+                .on("start brush end", function (event) {
+                    const selection = event.selection;
+                    if (selection) {
+                        const [min, max] = selection.map(xScales[dim].invert); // Get range
+                        selectedRanges[dim] = [min, max];
+                    } else {
+                        delete selectedRanges[dim]; // Clear filter
+                    }
+                    updateLines();
+                })
+            );
+    });
+
+    // Initial draw of all lines
+    updateLines();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+const state = {
+    currentState: "initial",
+    isModalOpen: false,
+    // Add more state properties here if needed
+};
+
+// Function to handle line click event
+function handleLineClick(data) {
+    console.log("Line clicked:", data);
+    state.isModalOpen = true;
+    // Clear previous modal content
+    d3.select("#modal").style("display", "flex");
+
+    // Create a clickable image link
+    const modalImageContainer = d3.select("#modal-image-container");
+
+    // Remove existing content to avoid duplication
+    modalImageContainer.selectAll("*").remove();
+
+    // Append a link around the image
+    modalImageContainer.append("a")
+        .attr("href", data.link) // Set the link to the person's link
+        .attr("target", "_blank") // Open link in a new tab
+        .append("img")
+        .attr("src", data.thumbnail)
+        .attr("alt", data.title)
+        .style("max-width", "100%") // Ensure the image fits the modal
+        .style("height", "auto");
+
+    // Update text information
+    d3.select("#modal-radar").attr("src", createRadarChart(data.allIndices));
+    d3.select("#modal-image").attr("src", data.thumbnail);
+    d3.select("#modal-name").text(data.title);
+    d3.select("#modal-desc").text(data.description);
+
+    // Create the radar chart
+    const radarChartContainer = d3.select("#modal-radar-chart");
+
+    // Remove existing content to avoid duplication
+    radarChartContainer.selectAll("*").remove();
+
+    // Create the radar chart SVG
+    const radarChartSvg = radarChartContainer.append("svg")
+        .attr("width", 300)
+        .attr("height", 300);
+
+    // Call the createRadarChart function to generate the chart
+    createRadarChart(data.allIndices, radarChartSvg);
+
+    // Create the bucket chart
+    const bucketChartContainer = d3.select("#modal-bucket-chart");
+
+    // Remove existing content to avoid duplication
+    bucketChartContainer.selectAll("*").remove();
+
+    // Create the bucket chart SVG
+    const bucketChartSvg = bucketChartContainer.append("svg")
+        .attr("width", 500)
+        .attr("height", 400);
+
+    // Call the createBucketChart function to generate the chart
+    createBucketChart([data], bucketChartSvg);
+
+    d3.select("#modal-link")
+        .html(`<a href="${data.link}" target="_blank">☞ More Info</a>`);
+}
+
+d3.select("#close-modal").on("click", function() {
+    d3.select("#modal").style("display", "none");
+});
+
+d3.select("#modal").on("click", function(event) {
+    if (event.target === this) {
+        d3.select("#modal").style("display", "none");
+    }
+});
+
+
 
 
